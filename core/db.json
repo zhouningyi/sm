@@ -1,0 +1,34 @@
+[
+	{
+		"db_id": "rds_spider",
+		"host": "rm-2zemyd8m8n226shs7o.pg.rds.aliyuncs.com",
+		"database": "spider",
+		"port": "3432",
+		"username": "kupai",
+		"password": "Laplace5050809338"
+	},
+	{
+		"db_id": "local_database",
+		"host": "localhost",
+		"database": "database",
+		"port": "5432",
+		"username": "postgres",
+		"password": "zhouningyi"
+	},
+	{
+		"db_id": "master_spider",
+		"host": "192.168.0.12",
+		"database": "spider",
+		"port": "5432",
+		"username": "postgres",
+		"password": "zhouningyi"
+	},
+	{
+		"db_id": "local_spider",
+		"host": "localhost",
+		"database": "spider",
+		"port": "5432",
+		"username": "postgres",
+		"password": "zhouningyi"
+	}
+]
