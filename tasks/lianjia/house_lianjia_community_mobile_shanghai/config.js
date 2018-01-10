@@ -41,5 +41,5 @@ module.exports = {
   processing: require('./processer'),
   parallN: 10,
   queryInterval: 100,
-  models: ['house_lianjia_community']
+  tables: ['house_lianjia_communities']
 };

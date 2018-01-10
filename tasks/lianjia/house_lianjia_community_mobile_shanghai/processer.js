@@ -3,10 +3,10 @@
  */
 const Utils = require('./../../../../lib/utils');
 const projection = require('./../../../../lib/projection');
-const _ = require('lodash');
+// const _ = require('lodash');
 
 module.exports = function (record, success, fail) {
-  const models = record.models;
+  const { tables } = record;
 
   const json = record.json;
   if (!json) return fail('no data');
@@ -43,19 +43,11 @@ module.exports = function (record, success, fail) {
     green_rate: prop.greenRate
   };
 
+  d = Utils.cleanObjectNull(d);
+
   console.log(d, 'd...');
 
-  // const soldPriceData = data.soldPriceData;
-  d = Utils.cleanObjectNull(d);
-  // console.log(d);
-
-  models.house_lianjia_community.upsert(d).then(() => {});
-
-  // if(line.house_see_record_info){
-  //   var house_see_record_info = line.house_see_record_info;
-  //   d.views = house_see_record_info.total_see_count;
-  //   d.view_1_month = house_see_record_info.last_month_see_count;
-  // }
-
-  return success(null);
+  Utils.batchUpsert(tables.house_lianjia_communities, [d])
+  .then(() => success(null))
+  .catch(() => fail(null));
 };

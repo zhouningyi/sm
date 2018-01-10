@@ -30,7 +30,6 @@ const checkConfig = (cfg) => {
   return cfg;
 };
 
-
 const defaultValidation = [{
   uiType: 'hidden',
   value: 2,

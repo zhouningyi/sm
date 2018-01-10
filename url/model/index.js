@@ -36,7 +36,6 @@ class UrlModel extends Event {
     this.options = Utils.deepMerge(UrlModel.options, options);
   }
   run() {
-    console.log('run....run....');
     // 先尝试建立schema，然后再建立model
     const ts = [this.createSchema.bind(this), this.createModel.bind(this)];
     async.series(ts, (() => this.emit('ready')));
@@ -155,7 +154,6 @@ class UrlModel extends Event {
   update(cb) {
     const sql = UtilSQL.updateFinishSQL(this.config);
     this.sequelize.query(sql).then(() => {
-      console.log('update urls');
       cb();
     });
   }

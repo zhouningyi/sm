@@ -2,6 +2,7 @@
  * 爬取配置
  */
 const Gaodefy = require('./../../../lib/gaodefy');
+const _ = require('lodash');
 
 const dblink = require('./../../../lib/dblink');
 
@@ -13,38 +14,19 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    dblink.fn(db_id, 'public', 'areas', 'upsert', {
-      adcode: '100000',
-      name: '中国',
-      level: 'country'
-    }).then(() => {
-      dblink.fn(db_id, 'public', 'areas', 'findAll', {
-        where: {
-          adcode: {
-            $like: '3101%'
-          },
-          level: 'district',
-        },
-        attributes: {
-        }
-      }).then((ds) => {
+    dblink.upsert(db_id, 'public', 'areas', { adcode: '100000', name: '中国', level: 'country' })
+    .then(() => {
+      dblink.findAll(db_id, 'public', 'areas', { where: { polygon: null } }).then((ds) => {
         const result = {};
-        ds = ds.data;
-        let d;
-        let url;
-        for (const i in ds) {
-          d = ds[i].dataValues;
-          if (!d) return;
-          const { name, level } = d;
-          url = Gaodefy.getUrlDistrict(name, level);
-          result[url] = { url, params: { name } };
-        }
+        _.forEach(ds.data, (d) => {
+          const url = Gaodefy.getUrlDistrict(d.name, d.level);
+          result[url] = { url, params: { name: d.name } };
+        });
         cb(result);
       });
     });
   },
   parseType: 'json',
-  // processing: require('./processer'),
   periodInterval: 1000,
   tables: ['areas'],
   printInterval: 30,

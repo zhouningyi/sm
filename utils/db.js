@@ -4,6 +4,8 @@
 // const UtilsConfig = require('./config');
 const _ = require('lodash');
 
+const dUtils = require('./../lib/utils/data');
+
 function _transfer(type, col, value) {
   type = type.split('(')[0];
   if (col === 'updatedAt' || col === 'createdAt') return ' now() ';
@@ -40,6 +42,7 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
   const isUpdatedAt = 'updatedAt' in colsObj;
   return (d) => {
     d = _.clone(d);
+    d = dUtils.cleanObjectNull(d);
     const uniqueValue = d[uniqueKey];
     const colsFiltered = _.filter(cols, col => col in d);
     if (isCreatedAt) colsFiltered.push('createdAt');
@@ -52,7 +55,8 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
       return _transfer(type, col, value);
     });
     const valueStr = values.join(',');
-    const updateStr = _getUpdateSQL(cols);
+    const updateStr = _getUpdateSQL(colsFiltered);
+    if (!d.polygon) console.log(d.name, colsStr);
     //
     return `
       INSERT INTO ${schema}.${table}("${uniqueKey}",  ${colsStr})

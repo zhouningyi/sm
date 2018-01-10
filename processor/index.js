@@ -5,7 +5,6 @@
 * @Last modified time: 2017-05-26T00:05:46+08:00
 */
 
-
 const cheerio = require('cheerio');
 const Event = require('events').EventEmitter;
 

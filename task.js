@@ -71,12 +71,14 @@ class Tasks extends Event {
   }
 	// 根据taskName 查找、检查、扩展config
   load(name) {
-    let pth = this.alltasks[name];
-    pth = path.join(pth, 'config.js');
+    const pth = this.alltasks[name];
     const cur = path.join(__dirname, '');
-    const url = `./${path.relative(cur, pth)}`;
-    checkExist(url);
-    let config = require(url);
+    const urlConifg = `./${path.relative(cur, path.join(pth, 'config.js'))}`;
+    const urlProcesser = `./${path.relative(cur, path.join(pth, 'processer.js'))}`;
+    checkExist(urlConifg);
+    checkExist(urlProcesser);
+    let config = require(urlConifg);
+    if (!config.processing) config.processing = require(urlProcesser);
     config = this.config = Utils.genConfig(config);
   }
   init(next) {
@@ -188,7 +190,10 @@ class Tasks extends Event {
   	if (this.next) return this.next();
   	this.print('已经完成爬取...');
     this.send('done');
-    setTimeout(process.exit, 100);
+    setTimeout(() => {
+      console.log('process.exit....');
+      process.exit();
+    }, 100);
     process.send && process.send({ type: 'final' });
   }
   send(text) {
