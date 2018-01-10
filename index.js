@@ -25,12 +25,14 @@ const onlyUrls = argv.urls || false;
 const loopUpdate = argv.loop || false;
 
 const db_id = argv.db_id || argv.d || 'local_spider';
+const url_db_id = argv.url_db_id || argv.ud || 'local_spider';
 
 module.exports = new Task(taskName, {
   isNeedUpdateModel,
   isNeedCleanModel,
 	//
   db_id,
+  url_db_id,
   onlyUrls,
   loopUpdate
 });

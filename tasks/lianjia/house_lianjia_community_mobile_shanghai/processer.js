@@ -1,8 +1,8 @@
 /**
  *处理方法
  */
-const Utils = require('./../../../../lib/utils');
-const projection = require('./../../../../lib/projection');
+const Utils = require('./../../../lib/utils');
+const projection = require('./../../../lib/projection');
 // const _ = require('lodash');
 
 module.exports = function (record, success, fail) {
@@ -40,14 +40,14 @@ module.exports = function (record, success, fail) {
     lat: ll ? ll.lat : null,
     lng: ll ? ll.lng : null,
     house_type: prop.houseType,
-    green_rate: prop.greenRate
+    green_rate: prop.greenRate,
+    loop_line: prop.cycleLine
   };
 
   d = Utils.cleanObjectNull(d);
 
-  console.log(d, 'd...');
-
-  Utils.batchUpsert(tables.house_lianjia_communities, [d])
+  Utils.batchUpsert(tables.analysis.house_geo, [d])
   .then(() => success(null))
   .catch(() => fail(null));
 };
+// house_lianjia_communities

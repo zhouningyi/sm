@@ -16,6 +16,14 @@
 		"password": "zhouningyi"
 	},
 	{
+		"db_id": "lianjia_ofo",
+		"host": "106.14.153.238",
+		"database": "spiderman",
+		"port": "6432",
+		"username": "disoul",
+		"password": "602369017zxy"
+	},
+	{
 		"db_id": "master_spider",
 		"host": "192.168.0.12",
 		"database": "spider",

@@ -108,7 +108,8 @@ class Tasks extends Event {
   // 建立url的model
   initUrlModel(next) {
     const { config } = this;
-    const urlLink = dblink.getLinkById(this.options.db_id);
+    const { url_db_id } = this.options;
+    const urlLink = dblink.getLinkById(url_db_id);
     this.urlModel = new UrlModel(config, {}, urlLink);
     this.urlGen = new UrlGen(config, {
       db_id: this.options.db_id
@@ -155,7 +156,6 @@ class Tasks extends Event {
     const { config, urlModel } = this;
     const { db_id } = this.options;
     core.workers.forEach((cfg) => {
-      console.log(cfg, 'cfg...');
       const worker = new Worker(cfg, config, { db_id });
       worker.setUrlModel(urlModel);
       this.initEventsWorker(worker);

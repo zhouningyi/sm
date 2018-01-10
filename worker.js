@@ -45,9 +45,9 @@ class Worker extends Events {
     if (!o) return {};
     if (typeof o === 'object') return Object.assign({}, o, { db_id });
     o = o.split('.');
-    const schema_name = o.length > 1 ? o[0] : 'public';
+    const table_schema = o.length > 1 ? o[0] : 'public';
     const table_name = o[o.length - 1];
-    return { schema_name, table_name, db_id };
+    return { table_schema, table_name, db_id };
   }
   async initOutputModels() {
     const { config } = this;
@@ -60,7 +60,7 @@ class Worker extends Events {
       const table_name = tables[i];
       o = this._getLinkObject(table_name, this.options.db_id);
       model = await dblink.getTableModel(o);
-      result[o.table_name] = model;
+      _.set(result, table_name, model);
       if (!model) Utils.warnExit(`config_${config.name}/config.tables.${table_name}不存在...`);
     }
     result.sequelize = dblink.getLinkById(this.options.db_id);

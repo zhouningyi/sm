@@ -1,5 +1,4 @@
 
-
 // const Utils = require('./../../lib/utils');
 // const UtilsConfig = require('./config');
 const _ = require('lodash');
@@ -44,7 +43,7 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
     d = _.clone(d);
     d = dUtils.cleanObjectNull(d);
     const uniqueValue = d[uniqueKey];
-    const colsFiltered = _.filter(cols, col => col in d);
+    const colsFiltered = _.filter(cols, col => col in d).filter(d => d);
     if (isCreatedAt) colsFiltered.push('createdAt');
     if (isUpdatedAt) colsFiltered.push('updatedAt');
     //
@@ -56,7 +55,6 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
     });
     const valueStr = values.join(',');
     const updateStr = _getUpdateSQL(colsFiltered);
-    if (!d.polygon) console.log(d.name, colsStr);
     //
     return `
       INSERT INTO ${schema}.${table}("${uniqueKey}",  ${colsStr})
@@ -71,7 +69,7 @@ function batchUpsert(model, ds) {
   const uniqueKey = _.get(_.values(model.uniqueKeys), '0.column');
   const cols = model.rawAttributes;
   const table = model.name;
-  const getSQL = genGetSQL('public', table, uniqueKey, cols);
+  const getSQL = genGetSQL(model.$schema || 'public', table, uniqueKey, cols);
   const sqlLines = _.map(ds, d => getSQL(d)).join('');
   const sql = `
     BEGIN TRANSACTION;

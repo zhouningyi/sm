@@ -25,7 +25,7 @@ const getInterval = (config) => {
   if (typeof (time) === 'function') time = time();
   if (typeof (time) === 'number') return time;
   if (time.type === 'interval') return time.value;
-  return Utils.warnExit(`${config.name}_time的设置有错误`);
+  return Utils.warnExit(`${config.name}_time 的设置有错误`);
 };
 
 class UrlModel extends Event {

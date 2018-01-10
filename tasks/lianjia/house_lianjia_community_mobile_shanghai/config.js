@@ -1,33 +1,35 @@
 /**
  * 爬取配置
  */
-const Utils = require('./../../../../lib/utils');
-const Models = require('./../../../../model');
+const dblink = require('./../../../lib/dblink');
+const Utils = require('./../../../lib/utils');
+
 // const headers = require('./headers');
 const _ = require('lodash');
 
 const genURL = id => `http://soa.dooioo.com/api/v4/online/house/xiaoqu/detail?access_token=7poanTTBCymmgE0FOn1oKp&cityCode=sh&client=wap&propertyNo=${id}&sh_access_token=`;
 
+const table_name = 'analysis.house_geo';
 module.exports = {
   name: 'house_lianjia_community_mobile_shanghai',
   desc: '上海小区信息汇总',
-  // headers: headers,
   version: 2,
   time: {
     type: 'interval',
     value: 2
   },
-  urls(cb) {
-    Models.sequelize.query(`
-      SELECT community_id
-      FROM house_lianjia_communities
-      WHERE adcode LIKE '31%'
+  urls(cb, db_id) {
+    dblink.query(db_id, `
+     select community_id from analysis.house_geo
+     where loop_line is null
+     AND adcode like '31%'
     `)
     .then((ds) => {
+      ds = ds.data;
       let id;
       let url;
       const urls = {};
-      _.forEach(ds[0], (d) => {
+      _.forEach(ds, (d) => {
         id = d.community_id;
         url = genURL(id);
         urls[url] = {
@@ -38,8 +40,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
   parallN: 10,
   queryInterval: 100,
-  tables: ['house_lianjia_communities']
+  tables: [table_name]
 };
