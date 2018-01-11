@@ -31,7 +31,6 @@ class Worker extends Events {
   init() {
     this.reset();
     this.initOutputModels().then(() => {
-      console.log('initOutputModels');
       this.initQuery(this.run.bind(this));
       this.initProcessor();
       this.noExit();

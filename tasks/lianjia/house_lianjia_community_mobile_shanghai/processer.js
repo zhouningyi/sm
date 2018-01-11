@@ -48,6 +48,9 @@ module.exports = function (record, success, fail) {
 
   Utils.batchUpsert(tables.analysis.house_geo, [d])
   .then(() => success(null))
-  .catch(() => fail(null));
+  .catch((e) => {
+    console.log(e.sql);
+    fail(null);
+  });
 };
 // house_lianjia_communities

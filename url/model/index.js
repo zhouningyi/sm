@@ -63,7 +63,6 @@ class UrlModel extends Event {
       this.prefix(() => next());
     });
   }
-
   createIndex(next) {
     const { config } = this;
     const t = getT();
@@ -103,11 +102,10 @@ class UrlModel extends Event {
       schema: schemaName,
       table: config.name
     };
-    let idx = 0,
-      sqldata,
-      d,
-      unique_id,
-      dataline;
+    let idx = 0;
+    let sqldata;
+    let unique_id;
+    let dataline;
     urls.forEach((d, i) => {
       idx = Math.floor(i / upsertTransactionN);
       d = urls[i];

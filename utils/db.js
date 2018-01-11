@@ -6,19 +6,22 @@ const _ = require('lodash');
 const dUtils = require('./../lib/utils/data');
 
 function _transfer(type, col, value) {
+  if (type.endsWith('[]') && typeof (_.get(value, '0')) === 'string') {
+    return `ARRAY[${_.map(value, v => `'${v}'`)}]`;
+  }
   type = type.split('(')[0];
-  if (col === 'updatedAt' || col === 'createdAt') return ' now() ';
-  if (!value) return 'null';
-  if (type === 'JSON') return `'${JSON.stringify(value)}'::json`;
   if (type === 'JSON[]') {
     if (!value || !value.length) return ' null ';
     return `ARRAY[${(value || []).map(v => `'${JSON.stringify(v)}'::json`)}]`;
   }
-  if (type === 'JSONB') return `'${JSON.stringify(value)}'::jsonb`;
   if (type === 'JSONB[]') {
     if (!value || !value.length) return ' null ';
     return `ARRAY[${(value || []).map(v => `'${JSON.stringify(v)}'::jsonb`)}]`;
   }
+  if (col === 'updatedAt' || col === 'createdAt') return ' now() ';
+  if (!value) return 'null';
+  if (type === 'JSON') return `'${JSON.stringify(value)}'::json`;
+  if (type === 'JSONB') return `'${JSON.stringify(value)}'::jsonb`;
   if (type === 'VARCHAR') return `'${value}'`;
   if (type === 'GEOMETRY') {
     return `ST_GeomFromGeoJSON('${JSON.stringify(value)}')`;
@@ -37,6 +40,7 @@ function _getUpdateSQL(cols) {
 
 function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
   const cols = _.keys(colsObj).filter(col => col !== uniqueKey);
+//
   const isCreatedAt = 'createdAt' in colsObj;
   const isUpdatedAt = 'updatedAt' in colsObj;
   return (d) => {

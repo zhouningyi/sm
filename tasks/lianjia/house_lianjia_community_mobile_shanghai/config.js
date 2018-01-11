@@ -21,7 +21,7 @@ module.exports = {
   urls(cb, db_id) {
     dblink.query(db_id, `
      select community_id from analysis.house_geo
-     where loop_line is null
+     where address is null
      AND adcode like '31%'
     `)
     .then((ds) => {
