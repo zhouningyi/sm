@@ -1,4 +1,4 @@
-#SPIDER MAN
+# SPIDER MAN
 爬虫框架
 
 
@@ -11,11 +11,13 @@
 ```
 /core/db.json
 ```
-参数
-|简写|全称|说明|默认|
-| -- |---|-----| -- |
-|-n|--name|爬虫名|无|
-|-u|--update|更新url|false|
-|-c|--clean|删除过去url|false|
-|-d|--db_id|目标修改的数据库id|local_spider|
-|-ud|--url_db_id|存放url的数据库id|local_spider|
+
+参数:
+
+| 简写 |全称 | 说明 | 默认 |
+| -- | --- | ----- | -- |
+| -n |--name|爬虫名|无|
+| -u |--update|更新url|false|
+| -c |--clean|删除过去url|false|
+| -d |--db_id|目标修改的数据库id|local_spider|
+| -ud |--url_db_id|存放url的数据库id|local_spider|
