@@ -28,10 +28,10 @@
     "lodash": "^4.17.4",
     "needle": "^1.1.2",
     "optimist": "^0.6.1",
+    "pg": "^6.1.1",
     "pg_column": "^1.0.10",
     "random-useragent": "^0.3.0",
     "request": "^2.69.0",
-    "pg": "^6.1.1",
     "sequelize": "^3.31.1",
     "sphericalmercator": "^1.0.5"
   },

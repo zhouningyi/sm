@@ -29,6 +29,10 @@ function _transfer(type, col, value) {
   if (type === 'DOUBLE PRECISION') {
     return `${value}`;
   }
+  if (type.startsWith('TIMESTAMP')) {
+    if (typeof value === 'object') value = value.toUTCString();
+    return `TIMESTAMP '${value}'`;
+  }
   return `${value}`;
 }
 
