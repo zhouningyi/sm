@@ -35,7 +35,6 @@ module.exports = {
   periodInterval: 1000,
   tables: ['digital_coin_trend'],
   printInterval: 30,
-  proxy: 'shadow',
   //
   parallN: 1,
 };

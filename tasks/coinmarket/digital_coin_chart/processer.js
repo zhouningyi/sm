@@ -16,11 +16,6 @@ function getNumber(str) {
   return parseFloat(price, 10);
 }
 
-function getPercent(str) {
-  if (!str) return null;
-  const price = str.replace(/%/g, '');
-  return parseFloat(price, 10 / 100);
-}
 
 module.exports = (record, success, fail) => {
   const { json, params } = record;

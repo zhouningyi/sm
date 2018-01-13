@@ -22,7 +22,7 @@ function _transfer(type, col, value) {
   if (!value) return 'null';
   if (type === 'JSON') return `'${JSON.stringify(value)}'::json`;
   if (type === 'JSONB') return `'${JSON.stringify(value)}'::jsonb`;
-  if (type === 'VARCHAR') return `'${value}'`;
+  if (type === 'VARCHAR' || type === 'TEXT') return `'${value}'`;
   if (type === 'GEOMETRY') {
     return `ST_GeomFromGeoJSON('${JSON.stringify(value)}')`;
   }
