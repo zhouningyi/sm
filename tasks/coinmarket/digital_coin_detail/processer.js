@@ -22,11 +22,22 @@ module.exports = (record, success, fail) => {
   const { coin_name } = params;
   //
   const leftInfoNode = $('.list-unstyled');
-  const website_url = leftInfoNode.find('[title$=Website]').find('a').attr('href');
+  const as = leftInfoNode.find('a');
+  const website_url = as.filter((i, node) => {
+    return $(node).text() === 'Website';
+  }).attr('href');
+  const explorer_url = as.filter((i, node) => {
+    return $(node).text() === 'Explorer';
+  }).attr('href');
+  const code_url = as.filter((i, node) => {
+    return $(node).text() === 'Source Code';
+  }).attr('href');
   const coin_logo_img_url = $('.text-large').find('img').attr('src');
   const d = {
     coin_name,
     coin_logo_img_url,
+    explorer_url,
+    code_url,
     website_url,
   };
   //
