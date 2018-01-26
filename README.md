@@ -2,6 +2,7 @@
 
 ### 使用说明:
 请将需要使用的数据库配置，写入```core/db.json```
+node version >= 7.6
 ``` shell
  git clone git@github.com:zhouningyi/sm.git
  cd ./sm/lib
