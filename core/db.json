@@ -1,11 +1,21 @@
 [
 	{
+		"db_id": "public_data_test",
+		"host": "rm-bp106y19fa3992tt9.mysql.rds.aliyuncs.com",
+		"port": "3306",
+		"schema": "tech_zatlas_share_00",
+		"username": "tc_dev_ztsshr",
+		"password": "tc_dev_ztsshr_56a8e3",
+		"db_type": "mysql"
+	},
+	{
 		"db_id": "rds_spider",
 		"host": "rm-2zemyd8m8n226shs7o.pg.rds.aliyuncs.com",
 		"database": "spider",
 		"port": "3432",
 		"username": "kupai",
-		"password": "Laplace5050809338"
+		"password": "Laplace5050809338",
+		"db_type": "postgres"
 	},
 	{
 		"db_id": "local_database",
@@ -13,7 +23,8 @@
 		"database": "database",
 		"port": "5432",
 		"username": "postgres",
-		"password": "zhouningyi"
+		"password": "zhouningyi",
+		"db_type": "postgres"
 	},
 	{
 		"db_id": "lianjia_ofo",
@@ -21,15 +32,17 @@
 		"database": "spiderman",
 		"port": "6432",
 		"username": "disoul",
-		"password": "602369017zxy"
+		"password": "602369017zxy",
+		"db_type": "postgres"
 	},
 	{
 		"db_id": "master_spider",
 		"host": "192.168.0.12",
+		"username": "postgres",
+		"password": "zhouningyi",
 		"database": "spider",
 		"port": "5432",
-		"username": "postgres",
-		"password": "zhouningyi"
+		"db_type": "postgres"
 	},
 	{
 		"db_id": "local_spider",
@@ -37,6 +50,7 @@
 		"database": "spider",
 		"port": "5432",
 		"username": "postgres",
-		"password": "zhouningyi"
+		"password": "zhouningyi",
+		"db_type": "postgres"
 	}
 ]

@@ -1,17 +1,17 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var headers = require('./headers');
+const Utils = require('./../../../../lib/utils');
+const Models = require('./../../../../model');
+const headers = require('./headers');
 
-var maxLen = 100;
+const maxLen = 100;
 const genUrls = (adcode, count, urls, type) => {
-  if(!count) return;
-  for(var i = 0; i <= count + maxLen; i+= maxLen){
-    var url = genURL(i, type);
+  if (!count) return;
+  for (let i = 0; i <= count + maxLen; i += maxLen) {
+    const url = genURL(i, type);
     urls[url] = {
-      url: url,
+      url,
       params: { adcode, type }
     };
   }
@@ -28,9 +28,9 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls: function (cb) {
+  urls(cb) {
     const urls = {};
-    const onlineN = 10 * 10000;//预估线上的房源有10万套
+    const onlineN = 10 * 10000;// 预估线上的房源有10万套
     genUrls(310000, onlineN, urls, 'sell');
     cb(urls);
   },
@@ -41,9 +41,9 @@ module.exports = {
   parallN: 2,
   queryInterval: 300,
   models: [
-    'house_lianjia_detail', 
-    'house_lianjia_details_byplate', 
-    'house_lianjia_details_byplate_history', 
+    'house_lianjia_detail',
+    'house_lianjia_details_byplate',
+    'house_lianjia_details_byplate_history',
     'house_lianjia_community'
   ],
   userAgentType: 'mobile',

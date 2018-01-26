@@ -30,6 +30,7 @@ const checkConfig = (cfg) => {
   return cfg;
 };
 
+// { uiType: 'divider' },
 const defaultValidation = [{
   uiType: 'hidden',
   value: 2,
@@ -54,13 +55,72 @@ const defaultValidation = [{
     }
   }
 }, {
+  key: 'extractN',
+  value: 500,
+  uiType: 'input',
+  valueType: 'integer',
+  name: '一次性提取url',
+  desc: '一次性从url表里提取的条数'
+}, {
   key: 'encode',
   valueType: 'string',
   uiType: 'select',
   value: 'utf8',
   validate: {
-    options: ['utf8']
+    options: ['utf8', 'gbk']
   }
+}, {
+  key: 'queryType',
+  valueType: 'string',
+  uiType: 'select',
+  value: 'get',
+  validate: {
+    options: ['get', 'post', 'put']
+  }
+}, {
+  key: 'queryTimeout',
+  valueType: 'integer',
+  uiType: 'input',
+  value: 10 * 1000,
+}, {
+  key: 'parallN',
+  name: '并行数',
+  desc: '并行爬取进程数',
+  uiType: 'integer',
+  valueType: 'input',
+  value: 3,
+},
+// 解析
+{
+  key: 'parseType',
+  name: '解析方式',
+  uiType: 'select',
+  valueType: 'string',
+  value: 'dom',
+  validate: {
+    options: ['dom', 'json', 'raw']
+  }
+}, {
+  key: 'printInterval',
+  name: '打印间隔(行)',
+  desc: '每跑完多少条日志，打印出一条信息',
+  uiType: 'input',
+  valueType: 'integer',
+  value: 10
+}, {
+  key: 'id',
+  name: '唯一id',
+  desc: '从各种参数生成id',
+  uiType: 'inputCode',
+  valueType: 'string',
+  value: '(url, params) => url'
+}, {
+  key: 'url',
+  name: 'url',
+  desc: '从各种参数生成url',
+  uiType: 'inputCode',
+  valueType: 'string',
+  value: '(cb) => cb(null);'
 }];
 
 // 默认的爬虫配置
@@ -76,7 +136,7 @@ const defaultConfig = {
   urls(a, b, c, d) { // 根据外在的参数生成一堆url
     Utils.warn('url函数未实现');
   },
-    // 下载配置
+  // 下载配置
   encode: 'utf8', // 'gbk'
   queryType: 'get',
   queryTimeout: 10 * 1000,

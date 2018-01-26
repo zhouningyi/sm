@@ -57,30 +57,11 @@ class Query extends Event {
 
     options.headers = Utils.deepMerge(_.cloneDeep(options.headers), config.headers || {});
     _.forEach(options.headers, (v, k) => {
-      if (typeof v === 'function') {
-        v = v();
-        options.headers[k] = v;
-      }
+      if (typeof v === 'function') options.headers[k] = v();
     });
 
 
-    if (!options.headers['x-forwarded-for']) {
-      delete options.headers['x-forwarded-for'];
-    }
-
-//     options = {
-//       headers: {
-//         'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-//         'user_agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-//         'Upgrade-Insecure-Requests': 1,
-//         'Host': 'wikileaks.org',
-//         'Connection': 'keep-alive',
-//         'Cache-Control': 'max-age=0',
-// 'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-// 'Accept-Encoding':'gzip, deflate, sdch, br',
-// 'Accept-Language':'zh-CN,zh;q=0.8,en;q=0.6',
-//       }
-//     }
+    if (!options.headers['x-forwarded-for']) delete options.headers['x-forwarded-for'];
 
     options.url = url;
     options.timeout = config.queryTimeout || 10 * 1000;
@@ -129,140 +110,5 @@ class Query extends Event {
 Query.options = {
   printInterval: 50 // 每隔多少条打印一次
 };
-
-// function QueryPool() {
-//   events.EventEmitter.call(this);
-//   this.isLock = false;
-//   this.reset();
-// }
-// util.inherits(QueryPool, events.);
-
-// QueryPool.options = {
-//   'poolSize': 50,
-//   'queryTimeout': 5000,
-//   'queryInterval': 100,
-//   'periodInterval': 0
-// };
-
-// QueryPool.prototype = util._extend(QueryPool.prototype, {
-//   reset: function () {
-//     this.queryIndex = 0;
-//     this.poolLength = 0;
-//     this.isable = 1;
-//   },
-//   pipeTo: function (urlStream) {
-//     this.urlStream = urlStream;
-//     this.config = Utils.deepMerge(QueryPool.options, urlStream.config);
-//     //
-//     this.initEvent();
-//   },
-//   pipe: function (processor) {
-//     processor.pipeTo(this);
-//   },
-//   initEvent: function () {
-//     var self = this;
-//     this.urlStream.on('record', function (record) {
-//       self.queryIndex++;
-//       self.query(record);
-//     });
-//   },
-//   record: function (url, isOk, cb) {
-//     this.urlStream.record(url, isOk, cb);
-//   },
-//   query: function (record) {
-//     var config = this.config;
-//     var queryType = (config.queryType || 'get').toLowerCase();
-//     //
-//     var data = record.data, url = data.url, queryData = data.data;
-//     // console.log(url, '\n'); ////////////////////////);////////////////////////);////////////////////////
-
-//     var self = this;
-//     this.checkIfResume();
-//     if (!this.isable) return console.log('query -> url 可能有误...');
-//     //
-//     headers = config.headers || headers;
-//     var headersCopy = JSON.parse(JSON.stringify(headers));
-//     var xForwardedFor = headers['x-forwarded-for'];
-//     if (typeof(xForwardedFor) === 'function') {
-//       xForwardedFor = headersCopy['x-forwarded-for'] =  xForwardedFor();
-//     }
-//     //
-//     var userAgent = headers.userAgent;
-//     if (typeof(userAgent) === 'function') {
-//       userAgent = headersCopy['user_agent'] =  headersCopy['user-agent'] =
-//       headersCopy['User-agent'] =  userAgent();
-//     }
-//     //
-//     var cookie = headers.cookie || headers.Cookie;
-//     if (typeof(cookie) === 'function') {
-//       userAgent = headersCopy['Cookie'] =  headersCopy['cookie'] = cookie();
-//     }
-
-//     var options = {
-//       'timeout': config.queryTimeout,
-//       'user_agent': userAgent,
-//       'headers': headersCopy,
-//       'x-forwarded-for': xForwardedFor,
-//       'encoding': this.config.encoding
-//       // proxy: 'http://localhost:8866'
-//     };
-
-//     function handler(e, response, body){
-//       //
-//       self.poolLength = self.poolLength - 1;
-//       // self.checkIfResume();
-//       //
-//       self.emit('content', {
-//         e: e,
-//         response: response,
-//         body: body,
-//         record: record
-//       });
-//     }
-
-//     // http://sh.lianjia.com/ershoufang/sh1064862.html
-//     if (queryType === 'get'){
-//       nd.get(url, options, handler);
-//     } else if(queryType === 'post'){
-//       nd.post(url, queryData, options, handler);
-//     } else {
-//       console.log(queryType, 'queryType非 get / post 系统无法处理');
-//     }
-
-//     this.poolLength = this.poolLength + 1;
-//     //
-//   },
-//   checkIfResume: function () {
-//     if (this.poolLength >= this.config.poolSize - 1) {
-//       if (this.config.periodInterval) {
-//         this.isLock = true;
-//         this.urlStream.pause();
-//         setTimeout(function () {
-//           this.isLock = false;
-//           this.poolLength = 0;
-//           this.resume();
-//         }.bind(this), this.config.periodInterval);
-//       }
-//       return;
-//     };
-//     if (!this.isLock) {
-//       setTimeout(this.resume.bind(this));
-//     }
-//   },
-//   pause: function() {
-//     this.urlStream.pause();
-//     this.isable = false;
-//   },
-//   resume: function () {
-//     this.isable = true;
-//     var interval = this.config.queryInterval;
-//     var resume = this.urlStream.resume.bind(this.urlStream);
-//     if (interval) {
-//       clearTimeout(this.loopid);
-//       return (this.loopid = setTimeout(resume, interval));
-//     }
-//     return resume();
-//   }
-// });
 
 module.exports = Query;
