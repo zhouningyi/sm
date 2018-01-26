@@ -8,7 +8,7 @@
  git clone git@github.com:zhouningyi/dblink.git
  cd ..
  cnpm i
- node index.js  -n house_lianjia_community_mobile_shanghai -d lianjia_ofo  --clean
+ node index.js  -n digital_coin  --clean
 ```
 
 shell参数:
