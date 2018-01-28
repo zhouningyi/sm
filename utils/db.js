@@ -6,6 +6,7 @@ const _ = require('lodash');
 const dUtils = require('./../lib/utils/data');
 
 function _transfer(type, col, value) {
+  if (!value) return ' null ';
   if (type.endsWith('[]')) {
     if (!value || !value.length) return ' null ';
     return `ARRAY[${_.map(value, (v) => {
@@ -23,7 +24,6 @@ function _transfer(type, col, value) {
     return `ARRAY[${(value || []).map(v => `'${JSON.stringify(v)}'::jsonb`)}]`;
   }
   if (col === 'updatedAt' || col === 'createdAt') return ' now() ';
-  if (!value) return 'null';
   if (type === 'JSON') return `'${JSON.stringify(value)}'::json`;
   if (type === 'JSONB') return `'${JSON.stringify(value)}'::jsonb`;
   if (type === 'VARCHAR' || type === 'TEXT') return `'${value}'`;
@@ -69,7 +69,7 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
     const updateStr = _getUpdateSQL(colsFiltered);
     //
     return `
-      INSERT INTO ${schema}.${table}("${uniqueKey}",                                                               ${colsStr})
+      INSERT INTO ${schema}.${table}("${uniqueKey}",                                                                             ${colsStr})
       VALUES ('${uniqueValue}', ${valueStr})
       ON CONFLICT ("${uniqueKey}")
       DO UPDATE SET ${updateStr};
@@ -85,7 +85,7 @@ function batchUpsert(model, ds) {
   const sqlLines = _.map(ds, d => getSQL(d)).join('');
   const sql = `
     BEGIN TRANSACTION;
-    ${sqlLines}
+      ${sqlLines}
     COMMIT;
   `;
   return model.sequelize.query(sql);
