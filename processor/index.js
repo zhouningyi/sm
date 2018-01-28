@@ -46,7 +46,8 @@ class Processor extends Event {
         record.file = body;
       }
       //
-      config.processing(record, successF, failF);
+      const processor = config.processing || config.processor;
+      processor(record, successF, failF);
       this.index++;
     });
   }
