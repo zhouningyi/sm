@@ -2,13 +2,13 @@
  * 爬取配置
  */
 const Utils = require('./../../../../lib/utils');
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
 const getURL = (n) => {
-  let count = 200
-  return `https://wikileaks.org/podesta-emails/?q=&mfrom=&mto=&title=&notitle=&date_from=&date_to=&nofrom=&noto=&count=${count}&sort=6&page=${n}`
-}
+  const count = 200;
+  return `https://wikileaks.org/podesta-emails/?q=&mfrom=&mto=&title=&notitle=&date_from=&date_to=&nofrom=&noto=&count=${count}&sort=6&page=${n}`;
+};
 
 module.exports = {
   name: 'podestas',
@@ -19,21 +19,21 @@ module.exports = {
     value: 0.1
   },
   urls: (cb) => {
-    let urls = {}
-    for(let i = 0; i < 294; i++){
-      let url = getURL(i)
+    const urls = {};
+    for (let i = 0; i < 294; i++) {
+      const url = getURL(i);
       urls[url] = {
-        url: url
-      }
+        url
+      };
     }
-    cb(urls)
+    cb(urls);
   },
   parseType: 'dom',
-  processing: require('./processer'),
+  processing: require('./processor'),
   parallN: 10,
   proxy: 'shadow',
   queryInterval: 0,
   models: ['podestas'],
   periodInterval: 200,
   printInterval: 5
-}
+};

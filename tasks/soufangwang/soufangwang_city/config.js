@@ -1,8 +1,8 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
 
 module.exports = {
   version: 2,
@@ -12,7 +12,7 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls: function (cb) {
+  urls (cb) {
     let url = 'http://fang.com/SoufunFamily.htm';
     let urls = {
       [1]: { url }
@@ -21,9 +21,9 @@ module.exports = {
   },
   encoding: 'gbk',
   parseType: 'dom',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   parallN: 1,
   queryInterval: 0,
-  models:['soufangwang_city']
+  models: ['soufangwang_city']
 };

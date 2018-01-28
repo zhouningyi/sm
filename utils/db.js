@@ -6,8 +6,12 @@ const _ = require('lodash');
 const dUtils = require('./../lib/utils/data');
 
 function _transfer(type, col, value) {
-  if (type.endsWith('[]') && typeof (_.get(value, '0')) === 'string') {
-    return `ARRAY[${_.map(value, v => `'${v}'`)}]`;
+  if (type.endsWith('[]')) {
+    if (!value || !value.length) return ' null ';
+    return `ARRAY[${_.map(value, (v) => {
+      if (v && typeof v === 'object') return `'${JSON.stringify(v)}'::json`;
+      return `'${v}'`;
+    })}]`;
   }
   type = type.split('(')[0];
   if (type === 'JSON[]') {
@@ -65,7 +69,7 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
     const updateStr = _getUpdateSQL(colsFiltered);
     //
     return `
-      INSERT INTO ${schema}.${table}("${uniqueKey}",  ${colsStr})
+      INSERT INTO ${schema}.${table}("${uniqueKey}",                                                               ${colsStr})
       VALUES ('${uniqueValue}', ${valueStr})
       ON CONFLICT ("${uniqueKey}")
       DO UPDATE SET ${updateStr};

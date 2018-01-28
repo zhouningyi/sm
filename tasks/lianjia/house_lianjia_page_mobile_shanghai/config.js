@@ -35,7 +35,7 @@ module.exports = {
     cb(urls);
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   // proxy: 'abu',
   //
   parallN: 2,

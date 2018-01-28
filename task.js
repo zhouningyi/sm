@@ -74,11 +74,11 @@ class Tasks extends Event {
     const pth = this.alltasks[name];
     const cur = path.join(__dirname, '');
     const urlConifg = `./${path.relative(cur, path.join(pth, 'config.js'))}`;
-    const urlProcesser = `./${path.relative(cur, path.join(pth, 'processer.js'))}`;
+    const urlProcessor = `./${path.relative(cur, path.join(pth, 'processor.js'))}`;
     checkExist(urlConifg);
-    checkExist(urlProcesser);
+    checkExist(urlProcessor);
     let config = require(urlConifg);
-    if (!config.processing) config.processing = require(urlProcesser);
+    if (!config.processing) config.processing = require(urlProcessor);
     config = this.config = Utils.genConfig(config);
   }
   init(next) {

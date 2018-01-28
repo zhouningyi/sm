@@ -31,24 +31,24 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls (cb) {
+  urls(cb) {
     sequelize.query(`
       SELECT plate_id, adcode, selling_count
       FROM house_lianjia_plates
       WHERE adcode IS NOT NULL
-    `).then(ds => {
+    `).then((ds) => {
       const urls = {};
-      ds[0].forEach(d => {
-        let {adcode} = d;
-        adcode = adcode.toString().substring(0, 4) + '00';
+      ds[0].forEach((d) => {
+        let { adcode } = d;
+        adcode = `${adcode.toString().substring(0, 4) }00`;
         if (adcodes[adcode]) adcode = adcodes[adcode];
-        return genURLs(adcode, d.plate_id, d.selling_count||0, urls);
-      })
+        return genURLs(adcode, d.plate_id, d.selling_count || 0, urls);
+      });
       cb(urls);
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   parallN: 5,
   queryInterval: 0,

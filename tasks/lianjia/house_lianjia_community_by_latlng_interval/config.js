@@ -6,8 +6,8 @@ const _ = require('lodash');
 const sequelize = require('./../../../../model').sequelize;
 
 const getURL = (adcode, range) => {
-  return `http://ajax.lianjia.com/ajax/mapsearch/area/community?min_longitude=${range.lngmin}&max_longitude=${range.lngmax}&min_latitude=${range.latmin}&max_latitude=${range.latmax}&&city_id=${adcode}`
-}
+  return `http://ajax.lianjia.com/ajax/mapsearch/area/community?min_longitude=${range.lngmin}&max_longitude=${range.lngmax}&min_latitude=${range.latmin}&max_latitude=${range.latmax}&&city_id=${adcode}`;
+};
 
 const adcodes = {
   110100: 110000,
@@ -16,13 +16,13 @@ const adcodes = {
   120100: 120000
 };
 
-const getRange = geom => {
+const getRange = (geom) => {
   const coords = JSON.parse(geom).coordinates[0];
   const lngmin = _.min(coords.map(d => d[0]));
   const lngmax = _.max(coords.map(d => d[0]));
   const latmin = _.min(coords.map(d => d[1]));
   const latmax = _.max(coords.map(d => d[1]));
-  return {lngmin, lngmax, latmin, latmax};
+  return { lngmin, lngmax, latmin, latmax };
 };
 
 module.exports = {
@@ -33,7 +33,7 @@ module.exports = {
     type: 'interval',
     value: 10
   },
-  urls: function (cb) {
+  urls (cb) {
       const sql = `
       SELECT ST_AsGeojson(ST_Envelope(polygon)) as bound,  substring(adcode, 1, 4) || '00' AS adcode
       FROM house_lianjia_plates
@@ -53,7 +53,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   parallN: 5,
   queryInterval: 0,

@@ -1,18 +1,18 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var sequelize = require('./../../../../model').sequelize;
+let Utils = require('./../../../../lib/utils');
+let sequelize = require('./../../../../model').sequelize;
 
 const limit = 200;
 const getURL = (adcode, plate_id, offset) => {
   return `http://ajax.lianjia.com/ajax/housesell/area/bizcircle?ids=${plate_id}&limit_offset=${offset}&limit_count=${limit}&city_id=${adcode}`;
-}
+};
 
 const genURLs = (adcode, plate_id, selling_count, urls) => {
-  for(let offset = 0; offset <= selling_count; offset+= limit){
-    let url = getURL(adcode, plate_id, offset);
-    urls[url] = {url};
+  for (let offset = 0; offset <= selling_count; offset += limit) {
+    const url = getURL(adcode, plate_id, offset);
+    urls[url] = { url };
   }
 };
 
@@ -31,7 +31,7 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls: function (cb) {
+  urls (cb) {
     sequelize.query(`
       SELECT plate_id, adcode, selling_count
       FROM house_lianjia_plates
@@ -48,7 +48,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   parallN: 5,
   queryInterval: 0,

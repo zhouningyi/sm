@@ -67,7 +67,7 @@ module.exports = {
   //
   parseType: 'json',
   printInterval: 10,
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   // proxy: 'abu',
   models: ['eleme_shop', 'eleme_food_sku', 'eleme_food_item', 'eleme_category', 'eleme_title_tag', 'eleme_food_sku_history', 'eleme_map_food_item__tag']

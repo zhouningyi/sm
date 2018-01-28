@@ -38,7 +38,6 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
   //
   models: ['building']
 };

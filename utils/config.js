@@ -14,7 +14,8 @@ const checkConfig = (cfg) => {
   // 错误
   const name = cfg.name;
   const warnHead = `config_${name}: `;
-  if (!cfg.urls) warnExit(`${warnHead}必须要有urls函数，从回调函数返回所有url`);
+  const urls = cfg.urls || cfg.url;
+  if (!urls) warnExit(`${warnHead}必须要有urls函数，从回调函数返回所有url`);
   const qtypes = { get: 1, post: 1 };
   if (!(cfg.queryType.toLowerCase() in qtypes)) warnExit('queryType 只能为get 或post');
   if (!cfg.version) warnExit('请设置config.version');
@@ -133,9 +134,9 @@ const defaultConfig = {
       value: 0.01
     };
   },
-  urls(a, b, c, d) { // 根据外在的参数生成一堆url
-    Utils.warn('url函数未实现');
-  },
+  // urls(a, b, c, d) { // 根据外在的参数生成一堆url
+  //   Utils.warn('url函数未实现');
+  // },
   // 下载配置
   encode: 'utf8', // 'gbk'
   queryType: 'get',

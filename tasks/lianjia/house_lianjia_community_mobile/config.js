@@ -1,9 +1,9 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var headers = require('./headers');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
+let headers = require('./headers');
 
 const adcodes = {
   110100: 110000,
@@ -22,7 +22,7 @@ module.exports = {
     value: 10,
     type: 'interval'
   },
-  urls: function (cb) {
+  urls (cb) {
     const sql = `
       SELECT community_id, substring(district_adcode, 1, 4) || '00' AS adcode
       FROM house_lianjia_communities
@@ -41,7 +41,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   models: ['house_lianjia_community', 'house_lianjia_community_status_history_lianjia', 'agent_info'],
   //
   parallN: 20,

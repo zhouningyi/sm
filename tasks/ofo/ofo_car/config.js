@@ -6,20 +6,20 @@
 */
 
 
-
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var Gaodefy = require('./../../../../lib/gaodefy');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
+let Gaodefy = require('./../../../../lib/gaodefy');
 
 
 const getQuery = (lat, lng) => {
   return {
     // token: 'EC895AB0-17BA-11E7-9EEB-75E9E4A5A59B',
-    source:  0,
-    lat, lng
+    source: 0,
+    lat,
+lng
   };
 };
 
@@ -35,7 +35,7 @@ module.exports = {
     type: 'interval'
   },
   id: getID,
-  urls: cb => {
+  urls: (cb) => {
     const urls = {};
     //         WHERE adcode LIKE '4403%'
          // OR adcode LIKE '31%'
@@ -59,12 +59,12 @@ module.exports = {
       FROM tbs
       ORDER BY count DESC
       `)
-      .then(ds => {
-        ds[0].forEach(d => {
+      .then((ds) => {
+        ds[0].forEach((d) => {
           const url = getUrl();
           const query = getQuery(d.lat, d.lng);
           const url_id = getID(url, {}, query);
-          urls[url_id] = {url, query};
+          urls[url_id] = { url, query };
         });
         cb(urls);
       });
@@ -73,7 +73,7 @@ module.exports = {
   interval: 3000,
   parseType: 'json',
   queryType: 'post',
-  processing: require('./processer'),
+  processing: require('./processor'),
   periodInterval: 1000,
   models: ['ofo_car', 'ofo_user', 'ofo_car_history'],
   printInterval: 10,

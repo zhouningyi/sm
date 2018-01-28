@@ -28,7 +28,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   poolSize: 1,
   queryInterval: 0,

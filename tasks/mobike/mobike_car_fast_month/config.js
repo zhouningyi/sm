@@ -6,13 +6,12 @@
 */
 
 
-
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var Gaodefy = require('./../../../../lib/gaodefy');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
+let Gaodefy = require('./../../../../lib/gaodefy');
 
 
 const getQuery = (lat, lng) => {
@@ -34,22 +33,22 @@ module.exports = {
     type: 'interval'
   },
   headers: {
-    charset: "utf-8",
-    platform: "3",
-    //mobileNo: '15061884031',
+    charset: 'utf-8',
+    platform: '3',
+    // mobileNo: '15061884031',
     mobileNo: '',
-    referer:"https://servicewechat.com/wx80f809371ae33eda/15/page-frame.html",
-    'content-type': "application/x-www-form-urlencoded",
-    'user-agent': "MicroMessenger/6.5.4.1000 NetType/WIFI Language/zh_CN",
-    host: "mwx.mobike.com",
-    connection: "Keep-Alive",
-    'accept-encoding': "gzip",
-    'cache-control': "no-cache",
-     //accesstoken: '8017d2105328d35dc4a5ceb7c2e9810c',
-     wxcode: "04151eAJ18S0W80TCqCJ1cjsAJ151eA6",
+    referer: 'https://servicewechat.com/wx80f809371ae33eda/15/page-frame.html',
+    'content-type': 'application/x-www-form-urlencoded',
+    'user-agent': 'MicroMessenger/6.5.4.1000 NetType/WIFI Language/zh_CN',
+    host: 'mwx.mobike.com',
+    connection: 'Keep-Alive',
+    'accept-encoding': 'gzip',
+    'cache-control': 'no-cache',
+     // accesstoken: '8017d2105328d35dc4a5ceb7c2e9810c',
+    wxcode: '04151eAJ18S0W80TCqCJ1cjsAJ151eA6',
   },
   id: getID,
-  urls: cb => {
+  urls: (cb) => {
          // SELECT count(1), st_geohash(center, 7) AS geohash
          // FROM regions --buildings
          // WHERE adcode LIKE '4403%'
@@ -83,23 +82,23 @@ module.exports = {
        WHERE t.count > 3
        ORDER BY count
       `)
-     .then(ds => {
-        const urls = [];
-        let index = 0;
-        ds[0].forEach(d => {
+     .then((ds) => {
+       const urls = [];
+       let index = 0;
+       ds[0].forEach((d) => {
           index++;
           const url = getUrl();
-          const query  = getQuery(d.lat, d.lng);
+          const query = getQuery(d.lat, d.lng);
           const url_id = getID(url, {}, query);
-          urls.push({url, query, index});
+          urls.push({ url, query, index });
         });
-        cb(urls);
-      });
+       cb(urls);
+     });
   },
   parseType: 'json',
   queryType: 'post',
   timeout: 3000,
-  processing: require('./processer'),
+  processing: require('./processor'),
   periodInterval: 1000,
   // proxy:'abu',
   models: ['mobike_car_fast', 'mobike_car_fast_history'],

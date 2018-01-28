@@ -24,6 +24,7 @@
     "bcore": "^0.0.21",
     "chalk": "^2.3.0",
     "cheerio": "^1.0.0-rc.2",
+    "d3-scale": "^1.0.7",
     "deepmerge": "^2.0.1",
     "lodash": "^4.17.4",
     "needle": "^1.1.2",
@@ -33,7 +34,8 @@
     "random-useragent": "^0.3.0",
     "request": "^2.69.0",
     "sequelize": "^3.31.1",
-    "sphericalmercator": "^1.0.5"
+    "sphericalmercator": "^1.0.5",
+    "zcontrol": "^1.2.31"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",

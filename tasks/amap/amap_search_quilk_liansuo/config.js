@@ -1,23 +1,23 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var gaodefy = require('./../../../../lib/gaodefy');
+const Utils = require('./../../../../lib/utils');
+const Models = require('./../../../../model');
+const gaodefy = require('./../../../../lib/gaodefy');
 
-var _ = require('lodash');
+const _ = require('lodash');
 
 
 const createUrl = (d, urls) => {
-  if(d.text && d.text.length > 10) d.text = d.text.substring(0, 4);
+  if (d.text && d.text.length > 10) d.text = d.text.substring(0, 4);
   url = gaodefy.getUrlSearchQuilk(d.text, d.adcode);
   url = url.replace(/"/g, '');
   url = url.replace(/'/g, '');
-  if(Math.random() < 0.00001) console.log(url)
+  if (Math.random() < 0.00001) console.log(url);
   urls[url] = {
-    url: url
+    url
   };
-}
+};
 
 module.exports = {
   name: 'amap_search_quilk_liansuo',
@@ -29,8 +29,7 @@ module.exports = {
     type: 'interval',
     value: 7
   },
-  urls: function(cb){
-
+  urls(cb) {
     const addons = '';// "AND adcode LIKE '50%'"
     Models.sequelize
     .query(`
@@ -49,19 +48,21 @@ module.exports = {
         and tbs.count > 3 
         and areas.adcode like tbs.adcode || '%'
       `)
-    .then(function(ds){
-      var name, url, ds = ds[0];
-      var urls = {};
-      ds.forEach(function(d){
+    .then((ds) => {
+      var name,
+        url,
+        ds = ds[0];
+      const urls = {};
+      ds.forEach((d) => {
         createUrl(d, urls);
       });
       cb(urls);
     });
   },
   //
-  'parseType': 'json',
-  'processing': require('./processer'),
+  parseType: 'json',
+  processing: require('./processor'),
   //
-  'save': 'postgres',
-  'models': ['region']
+  save: 'postgres',
+  models: ['region']
 };

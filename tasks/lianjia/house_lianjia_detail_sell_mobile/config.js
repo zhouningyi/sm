@@ -42,7 +42,7 @@ module.exports = {
     });
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   poolSize: 10,
   queryInterval: 0,
   periodInterval: 2000,

@@ -34,6 +34,6 @@ module.exports = {
   // proxy: 'abu',
   //
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   models: ['house_iwjw_community']
 };

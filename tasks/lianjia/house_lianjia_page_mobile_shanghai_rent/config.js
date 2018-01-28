@@ -1,16 +1,16 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
+const Utils = require('./../../../../lib/utils');
+const Models = require('./../../../../model');
 
-var maxLen = 100;
+const maxLen = 100;
 const genUrls = (count, urls) => {
-  if(!count) return;
-  for(var i = 0; i <= count + maxLen; i+= maxLen){
-    var url = genURL(i);
+  if (!count) return;
+  for (let i = 0; i <= count + maxLen; i += maxLen) {
+    const url = genURL(i);
     urls[url] = {
-      url: url,
+      url,
       params: {
         type: 'rent'
       }
@@ -18,7 +18,7 @@ const genUrls = (count, urls) => {
   }
 };
 
-const genURL = (offset) => `http://soa.dooioo.com/api/v4/online/rent/zufang/search?access_token=7poanTTBCymmgE0FOn1oKp&channel=zufang&cityCode=sh&client=wap&limit_count=${maxLen}&limit_offset=${offset}`;
+const genURL = offset => `http://soa.dooioo.com/api/v4/online/rent/zufang/search?access_token=7poanTTBCymmgE0FOn1oKp&channel=zufang&cityCode=sh&client=wap&limit_count=${maxLen}&limit_offset=${offset}`;
 
 module.exports = {
   version: 2,
@@ -29,14 +29,14 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls: cb => {
+  urls: (cb) => {
     const urls = {};
-    const onlineN = 80000;//预估线上的房源有8万套
+    const onlineN = 80000;// 预估线上的房源有8万套
     genUrls(onlineN, urls);
     cb(urls);
   },
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   // proxy: 'abu',
   //
   parallN: 2,

@@ -29,7 +29,7 @@ class UrlGen extends Events {
   }
   run() {
     const { config } = this;
-    let { urls } = config;
+    let urls = config.urls || config.url;
     this.t = getT();
     this.print('开始生成urls...');
     if (typeof (urls) === 'function') {

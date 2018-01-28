@@ -1,11 +1,11 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var gaodefy = require('./../../../../lib/gaodefy');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
+let gaodefy = require('./../../../../lib/gaodefy');
 
-var _ = require('lodash');
+let _ = require('lodash');
 
 const urllist = [
   'http://map.amap.com/service/subway?srhdata=4201_drw_wuhan.json',
@@ -49,7 +49,7 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls: function(cb){
+  urls(cb){
     const urls = {};
     urllist.forEach(url => {
       urls[url] = {url};
@@ -58,7 +58,7 @@ module.exports = {
   },
   parseType: 'json',
   timeout: 5000,
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   models: ['amap_subway_site', 'amap_subway']
 };

@@ -1,13 +1,13 @@
 /**
  * 爬取配置
  */
-var Utils = require('./../../../../lib/utils');
-var Models = require('./../../../../model');
-var Gaodefy = require('./../../../../lib/gaodefy');
+let Utils = require('./../../../../lib/utils');
+let Models = require('./../../../../model');
+let Gaodefy = require('./../../../../lib/gaodefy');
 
 const getQuery = (lat, lng) => {
   return {
-    errMsg: 'getMapCenterLocation', 
+    errMsg: 'getMapCenterLocation',
     longitude: lng,
     latitude: lat,
   };
@@ -25,21 +25,21 @@ module.exports = {
     type: 'interval'
   },
   headers: {
-    charset: "utf-8",
-    platform: "3",
+    charset: 'utf-8',
+    platform: '3',
     mobileNo: '18357138841',
-    referer:"https://servicewechat.com/wx80f809371ae33eda/15/page-frame.html",
-    'content-type': "application/x-www-form-urlencoded",
-    'user-agent': "MicroMessenger/6.5.4.1000 NetType/WIFI Language/zh_CN",
-    host: "mwx.mobike.com",
-    connection: "Keep-Alive",
-    'accept-encoding': "gzip",
-    'cache-control': "no-cache",
-     accesstoken: 'b5dc619298f55ed519be42c542452a9a',
+    referer: 'https://servicewechat.com/wx80f809371ae33eda/15/page-frame.html',
+    'content-type': 'application/x-www-form-urlencoded',
+    'user-agent': 'MicroMessenger/6.5.4.1000 NetType/WIFI Language/zh_CN',
+    host: 'mwx.mobike.com',
+    connection: 'Keep-Alive',
+    'accept-encoding': 'gzip',
+    'cache-control': 'no-cache',
+    accesstoken: 'b5dc619298f55ed519be42c542452a9a',
      // wxcode: '021izFnS1CUPCa1EmfpS1mtBnS1izFnY'
   },
   id: getID,
-  urls: cb => {
+  urls: (cb) => {
          // SELECT count(1), st_geohash(center, 7) AS geohash
          // FROM regions --buildings
          // WHERE adcode LIKE '4403%'
@@ -51,7 +51,7 @@ module.exports = {
          // OR    adcode LIKE '120%'
          // GROUP BY st_geohash(center, 7)
          // ORDER BY count DESC
-         
+
          // SELECT count(1), st_geohash(center, 7) AS geohash
          // FROM  mobike_cars
          // WHERE district_adcode LIKE '10%' OR district_adcode LIKE '31%' OR district_adcode LIKE '44%'
@@ -74,23 +74,23 @@ module.exports = {
        WHERE t.count > 3
        ORDER BY count
       `)
-     .then(ds => {
-        const urls = [];
-        let index = 0;
-        ds[0].forEach(d => {
+     .then((ds) => {
+       const urls = [];
+       let index = 0;
+       ds[0].forEach((d) => {
           index++;
           const url = getUrl();
-          const query  = getQuery(d.lat, d.lng);
+          const query = getQuery(d.lat, d.lng);
           const url_id = getID(url, {}, query);
-          urls.push({url, query, index});
+          urls.push({ url, query, index });
         });
-        cb(urls);
-      });
+       cb(urls);
+     });
   },
   parseType: 'json',
   queryType: 'post',
   timeout: 3000,
-  processing: require('./processer'),
+  processing: require('./processor'),
   periodInterval: 1000,
   // proxy:'abu',
   models: ['mobike_car', 'mobike_car_history'],

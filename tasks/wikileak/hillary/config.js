@@ -2,13 +2,13 @@
  * 爬取配置
  */
 const Utils = require('./../../../../lib/utils');
-const fs = require('fs')
-const path = require('path')
+const fs = require('fs');
+const path = require('path');
 
 const getURL = (n) => {
-  let count = 200
-  return `https://wikileaks.org/clinton-emails/?q=&mfrom=&mto=&title=&notitle=&date_from=&date_to=&nofrom=&noto=&count=${count}&sort=2&page=${n}&#searchresult`
-}
+  const count = 200;
+  return `https://wikileaks.org/clinton-emails/?q=&mfrom=&mto=&title=&notitle=&date_from=&date_to=&nofrom=&noto=&count=${count}&sort=2&page=${n}&#searchresult`;
+};
 
 module.exports = {
   name: 'hillary',
@@ -19,21 +19,21 @@ module.exports = {
     value: 1
   },
   urls: (cb) => {
-    let urls = {}
-    for(let i = 0; i < 155; i++){
-      let url = getURL(i)
+    const urls = {};
+    for (let i = 0; i < 155; i++) {
+      const url = getURL(i);
       urls[url] = {
-        url: url
-      }
+        url
+      };
     }
-    cb(urls)
+    cb(urls);
   },
   parseType: 'dom',
-  processing: require('./processer'),
+  processing: require('./processor'),
   parallN: 10,
   proxy: 'shadow',
   queryInterval: 0,
   models: ['hillary'],
   periodInterval: 200,
   printInterval: 5
-}
+};

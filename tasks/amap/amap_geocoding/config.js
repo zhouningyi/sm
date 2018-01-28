@@ -41,7 +41,7 @@ module.exports = {
   },
   //
   parseType: 'json',
-  processing: require('./processer'),
+  processing: require('./processor'),
   //
   models: ['region']
 };

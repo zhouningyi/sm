@@ -11,11 +11,11 @@ const createUrl = (d, urls) => {
   url = gaodefy.getUrlSearchQuilk(d.text, d.adcode);
   url = url.replace(/"/g, '');
   url = url.replace(/'/g, '');
-  if(Math.random() < 0.00001) console.log(url)
+  if (Math.random() < 0.00001) console.log(url);
   urls[url] = {
-    url: url
+    url
   };
-}
+};
 
 const fenci = `
     WITH tbs AS (
@@ -41,7 +41,7 @@ const frequecy = `
     SELECT areas.name || ' ' || tbs."name" as "text", areas.name AS name, adcode
     FROM  tbs, areas
     WHERE areas.level = 'district'
-`
+`;
 
 const frequecyShanghai = `
     WITH tbs as (
@@ -73,7 +73,7 @@ module.exports = {
     type: 'interval',
     value: 7
   },
-  urls: function(cb){
+  urls(cb){
     // const addons = '' //"AND adcode LIKE '50%'";
     Models.sequelize
     .query(houseShanghai)
@@ -87,9 +87,9 @@ module.exports = {
     });
   },
   //
-  'parseType': 'json',
-  'processing': require('./processer'),
+  parseType: 'json',
+  processing: require('./processor'),
   //
-  'save': 'postgres',
-  'models': ['region']
+  save: 'postgres',
+  models: ['region']
 };
