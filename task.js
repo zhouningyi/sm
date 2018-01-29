@@ -4,7 +4,7 @@
 * @Last modified by:   disoul
 * @Last modified time: 2017-05-17T02:40:49+08:00
 */
-
+const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
 const async = require('async');
@@ -17,6 +17,7 @@ const UrlGen = require('./url/generator');
 const UrlModel = require('./url/model');
 //
 const dblink = require('./lib/dblink');
+
 const core = require('./core');
 const Utils = require('./utils');
 
@@ -105,10 +106,15 @@ class Tasks extends Event {
     this.send('start');
     this.emit('start');
   }
+  addLink(db_id) {
+    const o = _.filter(core.dbs, o => o.db_id === db_id)[0];
+    dblink.addLink(o);
+  }
   // 建立url的model
   initUrlModel(next) {
     const { config } = this;
     const { url_db_id } = this.options;
+    this.addLink(url_db_id);
     const urlLink = dblink.getLinkById(url_db_id);
     this.urlModel = new UrlModel(config, {}, urlLink);
     this.urlGen = new UrlGen(config, {

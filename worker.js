@@ -8,7 +8,6 @@
 const async = require('async');
 const Events = require('events').EventEmitter;
 const _ = require('lodash');
-
 const Query = require('./query');
 const Processor = require('./processor');
 
@@ -17,7 +16,7 @@ const dblink = require('./lib/dblink');
 
 const { dbs } = require('./core');
 // 添加所有的db
-_.forEach(dbs, db => dblink.addLink(db));
+// _.forEach(dbs, db => dblink.addLink(db));
 
 class Worker extends Events {
   constructor(cfg, config, options) {
@@ -48,6 +47,11 @@ class Worker extends Events {
     const table_name = o[o.length - 1];
     return { table_schema, table_name, db_id };
   }
+  addLink(db_id) {
+    const o = _.filter(dbs, d => d.db_id === db_id)[0];
+    if (!o) return console.log(`db_id为${db_id}的数据库不存在...`);
+    dblink.addLink(o);
+  }
   async initOutputModels() {
     const { config } = this;
     const { tables } = config;
@@ -55,6 +59,7 @@ class Worker extends Events {
     const result = {};
     let model;
     let o;
+    this.addLink(this.options.db_id);
     for (const i in tables) {
       const table_name = tables[i];
       o = this._getLinkObject(table_name, this.options.db_id);

@@ -1,14 +1,5 @@
 [
 	{
-		"db_id": "public_data_test",
-		"host": "rm-bp106y19fa3992tt9.mysql.rds.aliyuncs.com",
-		"port": "3306",
-		"schema": "tech_zatlas_share_00",
-		"username": "tc_dev_ztsshr",
-		"password": "tc_dev_ztsshr_56a8e3",
-		"db_type": "mysql"
-	},
-	{
 		"db_id": "rds_spider",
 		"host": "rm-2zemyd8m8n226shs7o.pg.rds.aliyuncs.com",
 		"database": "spider",
