@@ -115,24 +115,23 @@ class Tasks extends Event {
     const { config } = this;
     const { url_db_id } = this.options;
     this.addLink(url_db_id);
-    const urlLink = dblink.getLinkById(url_db_id);
-    this.urlModel = new UrlModel(config, {}, urlLink);
-    this.urlGen = new UrlGen(config, {
-      db_id: this.options.db_id
-    }, urlLink);
-
-    process.on('SIGINT', () => {
-      this.urlModel.close(); // 进程结束前释放连接
-      console.log('i receive sigint!');
-      process.exit(1);
+    const  = dblink.getLinkById(url_db_id).then(urlLink => {
+      this.urlModel = new UrlModel(config, {}, urlLink);
+      this.urlGen = new UrlGen(config, {
+        db_id: this.options.db_id
+      }, urlLink);
+  
+      process.on('SIGINT', () => {
+        this.urlModel.close(); // 进程结束前释放连接
+        console.log('i receive sigint!');
+        process.exit(1);
+      });
+      process.on('exit', (code, signal) => {
+        console.log('i will exit', code, signal, this.name, this.options, this.tasks);
+        this.urlModel.close(); // 进程结束前释放连接
+      });
+      next();
     });
-    process.on('exit', (code, signal) => {
-      console.log('i will exit', code, signal, this.name, this.options, this.tasks);
-      this.urlModel.close(); // 进程结束前释放连接
-    });
-    next();
-    // this.urlModel.on('ready', () => {
-    // });
   }
   // 执行url
   runUrlModel(next) {
