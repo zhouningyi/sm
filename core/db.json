@@ -39,9 +39,9 @@
 		"db_id": "local_spider",
 		"host": "localhost",
 		"database": "spider",
-		"port": "5432",
 		"username": "postgres",
 		"password": "zhouningyi",
-		"db_type": "postgres"
+		"db_type": "postgres",
+		"port": "5432"
 	}
 ]

@@ -1,5 +1,11 @@
 
 const dbs = require('./db.json');
+const core = require('./core.json');
+const models = require('./model.json');
+
+const Utils = require('./../utils');
+const dblink = require('./../lib/dblink');
+
 //
 const workers = [
   {
@@ -20,6 +26,23 @@ const proxy = {
     port: 1087
   }
 };
-module.exports = {
-  dbs, workers, proxy
+
+async function onCoreReady() {
+  const core_db = core.core_servers[core.current];
+  const { db_id } = core_db;
+  dblink.addLink(core_db);
+  dblink.loadDbConfigs(dbs);
+  Utils.print('已连到core数据库... 开始查询表信息', 'green');
+  const dbsQuery = dblink.findAll(db_id, 'core', 'dbs');
+  const qs = [dbsQuery];
+  const [dbs] = Promise.All(qs);
+  EXPORTS.dbs = dbs.data;
+  return dbs.data;
+}
+
+//
+const EXPORTS = {
+  models, dbs, workers, proxy, onCoreReady
 };
+//
+module.exports = EXPORTS;

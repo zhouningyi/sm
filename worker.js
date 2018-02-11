@@ -1,3 +1,4 @@
+
 /**
 * @Author: disoul
 * @Date:   2017-04-27T22:39:33+08:00
@@ -14,7 +15,7 @@ const Processor = require('./processor');
 const Utils = require('./utils');
 const dblink = require('./lib/dblink');
 
-const { dbs } = require('./core');
+const { dbs, models } = require('./core');
 // 添加所有的db
 // _.forEach(dbs, db => dblink.addLink(db));
 
@@ -24,7 +25,7 @@ class Worker extends Events {
     this.options = Utils.deepMerge(Worker.options, options);
     this.config = config;
     this.id = Utils.getRandId();
-		// Utils.print(`初始化workder ${this.id}`)
+		// Utils.print(`初始化workder ${this.id}`);
     this.init();
   }
   init() {
@@ -39,12 +40,21 @@ class Worker extends Events {
     this.isloop = true;
   }
 	// 获取所有存放数据的表的model，即把config.model里的model名字 替换成model对象
-  _getLinkObject(o, db_id) {
-    if (!o) return {};
-    if (typeof o === 'object') return Object.assign({}, o, { db_id });
-    o = o.split('.');
-    const table_schema = o.length > 1 ? o[0] : 'public';
-    const table_name = o[o.length - 1];
+  _getLinkObject(tableO, db_id_default) {
+    if (!tableO) return {};
+    let table_schema;
+    let table_name;
+    let db_id;
+    if (typeof tableO === 'string') {
+      tableO = tableO.split('.');
+      table_schema = tableO.length > 1 ? tableO[0] : 'public';
+      table_name = tableO[tableO.length - 1];
+      db_id = db_id_default;
+    } else {
+      table_name = tableO.table_name;
+      table_schema = tableO.table_schema || 'public';
+      db_id = tableO.db_id || 'db_id_default';
+    }
     return { table_schema, table_name, db_id };
   }
   addLink(db_id) {
@@ -54,20 +64,38 @@ class Worker extends Events {
   }
   async initOutputModels() {
     const { config } = this;
-    const { tables } = config;
-    if (!config.tables) return this.print('config.tables未设置');
+    const { tables, models } = config;
     const result = {};
     let model;
     let o;
-    this.addLink(this.options.db_id);
-    for (const i in tables) {
-      const table_name = tables[i];
-      o = this._getLinkObject(table_name, this.options.db_id);
-      model = await dblink.getTableModel(o);
-      _.set(result, table_name, model);
-      if (!model) Utils.warnExit(`config_${config.name}/config.tables.${table_name}不存在...`);
+    const { db_id } = this.options;
+    if (db_id) {
+      this.addLink(db_id);
+      result.sequelize = dblink.getLinkById(db_id);
     }
-    result.sequelize = dblink.getLinkById(this.options.db_id);
+    //
+    if (tables) {
+      let table_name;
+      for (const i in tables) {
+        const tableO = tables[i];
+        table_name = tableO.table_name;
+        o = this._getLinkObject(tableO, db_id);
+        model = await dblink.getTableModel(o);
+        _.set(result, table_name, model);
+        if (!model) Utils.warnExit(`config_${config.name}/config.tables.${table_name}不存在...`);
+      }
+    }
+    //
+    if (models) {
+      for (const j in models) {
+        const modelName = models[j];
+        const modelConfig = models[modelName];
+        if (!modelConfig) return console.log(`${modelName}的model不存在`);
+        model = dblink.getTableModel(modelConfig);
+        result[modelName] = model;
+      }
+    }
+
     this.models = result;
     return result;
   }

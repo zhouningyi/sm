@@ -1,0 +1,16 @@
+
+{
+	"current": "local",
+	"core_servers": {
+		"local": 	{
+			"db_id": "local_spider",
+			"host": "localhost",
+			"database": "spider",
+			"port": "4567",
+			"username": "postgres",
+			"password": "zhouningyi",
+			"db_type": "postgres"
+		}
+	}
+}
+

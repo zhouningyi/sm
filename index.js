@@ -10,6 +10,8 @@ const Utils = require('./utils');
 const argv = require('optimist').argv;
 const Task = require('./task');
 
+const core = require('./core');
+
 // 任务名称
 const taskName = argv.n || argv.name;
 if (!taskName) Utils.warnExit('请包含任务名: node task -n xxxx');
@@ -26,13 +28,23 @@ const loopUpdate = argv.loop || false;
 
 const db_id = argv.db_id || argv.d || 'local_spider';
 const url_db_id = argv.url_db_id || argv.ud || 'local_spider';
+const is_online = argv.online || argv.online || false;
 
-module.exports = new Task(taskName, {
-  isNeedUpdateModel,
-  isNeedCleanModel,
-	// \\//\\//\\//\\
-  db_id,
-  url_db_id,
-  onlyUrls,
-  loopUpdate
-});
+function run() {
+  return new Task(taskName, {
+    isNeedUpdateModel,
+    isNeedCleanModel,
+  // \\//\\//\\//\\
+    db_id,
+    url_db_id,
+    onlyUrls,
+    loopUpdate
+  });
+}
+
+if (!is_online) {
+  run();
+} else {
+  core.onCoreReady().then(() => run());
+}
+

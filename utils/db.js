@@ -69,7 +69,7 @@ function genGetSQL(schema = 'public', table, uniqueKey, colsObj) {
     const updateStr = _getUpdateSQL(colsFiltered);
     //
     return `
-      INSERT INTO ${schema}.${table}("${uniqueKey}",                                                                             ${colsStr})
+      INSERT INTO ${schema}.${table}("${uniqueKey}",                                                                                      ${colsStr})
       VALUES ('${uniqueValue}', ${valueStr})
       ON CONFLICT ("${uniqueKey}")
       DO UPDATE SET ${updateStr};

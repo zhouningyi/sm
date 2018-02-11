@@ -42,7 +42,7 @@ class UrlModel extends Event {
   }
 
   close() {
-    this.sequelize.close(); // 释放连接
+    if (this.sequelize.close) this.sequelize.close(); // 释放连接
   }
 
 	// 建立schema

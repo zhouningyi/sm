@@ -53,7 +53,6 @@ const findCorrectPath = (filepath, alltasks) => {
   });
 };
 
-
 class Tasks extends Event {
   constructor(name, options, next) {
     super();
@@ -61,9 +60,13 @@ class Tasks extends Event {
     this.name = name;
     this.next = next;
     //
+    this.loadModelConfigs();
     this.loadFiles();
     this.load(name);
     this.init();
+  }
+  loadModelConfigs() {
+    dblink.loadModelConfigs(core.models);
   }
   loadFiles() {
     const filepath = path.join(__dirname, './tasks');
@@ -106,31 +109,42 @@ class Tasks extends Event {
     this.send('start');
     this.emit('start');
   }
-  addLink(db_id) {
+  async addLink(db_id) {
     const o = _.filter(core.dbs, o => o.db_id === db_id)[0];
-    dblink.addLink(o);
+    const d = await dblink.addLink(o);
+    return d;
   }
   // 建立url的model
   initUrlModel(next) {
     const { config } = this;
     const { url_db_id } = this.options;
-    this.addLink(url_db_id);
-    const urlLink = dblink.getLinkById(url_db_id);
-    this.urlModel = new UrlModel(config, {}, urlLink);
-    this.urlGen = new UrlGen(config, {
-      db_id: this.options.db_id
-    }, urlLink);
+    this.addLink(url_db_id).then(() => {
+      dblink.getLinkById(url_db_id).then((urlLink) => {
+        this.urlModel = new UrlModel(config, {}, urlLink);
+        this.urlGen = new UrlGen(config, {
+          db_id: this.options.db_id
+        }, urlLink);
 
-    process.on('SIGINT', () => {
-      this.urlModel.close(); // 进程结束前释放连接
-      console.log('i receive sigint!');
-      process.exit(1);
+        process.on('SIGINT', () => {
+          this.urlModel.close(); // 进程结束前释放连接
+          console.log('i receive sigint!');
+          process.exit(1);
+        });
+        process.on('exit', (code, signal) => {
+          console.log('i will exit', code, signal, this.name, this.options, this.tasks);
+          this.urlModel.close(); // 进程结束前释放连接
+        });
+        next();
+      }).catch((e) => {
+        console.log(e);
+        Utils.warnExit('url数据库连接出错');
+      });
+    }).catch((e) => {
+      console.log(e);
+      Utils.warnExit('url数据库连接出错');
     });
-    process.on('exit', (code, signal) => {
-      console.log('i will exit', code, signal, this.name, this.options, this.tasks);
-      this.urlModel.close(); // 进程结束前释放连接
-    });
-    next();
+
+
     // this.urlModel.on('ready', () => {
     // });
   }
