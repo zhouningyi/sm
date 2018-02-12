@@ -57,10 +57,11 @@ class Worker extends Events {
     }
     return { table_schema, table_name, db_id };
   }
-  addLink(db_id) {
+  async addLink(db_id) {
     const o = _.filter(dbs, d => d.db_id === db_id)[0];
     if (!o) return console.log(`db_id为${db_id}的数据库不存在...`);
-    dblink.addLink(o);
+    const d = await dblink.addLink(o);
+    return d;
   }
   async initOutputModels() {
     const { config } = this;
@@ -70,15 +71,15 @@ class Worker extends Events {
     let o;
     const { db_id } = this.options;
     if (db_id) {
-      this.addLink(db_id);
-      result.sequelize = dblink.getLinkById(db_id);
+      await this.addLink(db_id);
+      result.sequelize = await dblink.getLinkById(db_id);
     }
     //
     if (tables) {
       let table_name;
       for (const i in tables) {
         const tableO = tables[i];
-        table_name = tableO.table_name;
+        table_name = typeof tableO === 'string' ? tableO : tableO.table_name;
         o = this._getLinkObject(tableO, db_id);
         model = await dblink.getTableModel(o);
         _.set(result, table_name, model);
@@ -95,7 +96,6 @@ class Worker extends Events {
         result[modelName] = model;
       }
     }
-
     this.models = result;
     return result;
   }

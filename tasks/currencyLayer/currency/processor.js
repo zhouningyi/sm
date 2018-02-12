@@ -5,14 +5,19 @@ const Utils = require('./../../../utils');
 const _ = require('lodash');
 
 module.exports = (record, success, fail) => {
-  const { $, json, tables } = record;
-  console.log(json, 'json....');
-  process.exit();
+  const { json, tables } = record;
+  console.log(tables.curreny, 'tables...');
   const results = [];
-  _.forEach(json, (v, k) => {
-
+  _.forEach(json.quotes, (v, k) => {
+    results.push({
+      pair: k,
+      source: k.substring(0, 3),
+      target: k.substring(3, 6),
+      price: v,
+      time: new Date()
+    });
   });
-  Utils.batchUpsert(tables.digital_coin, results)
+  Utils.batchUpsert(tables.curreny, results)
   .then(() => success(null))
   .catch((e) => {
     console.log(e);
