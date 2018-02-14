@@ -1,12 +1,11 @@
 /**
  *处理方法
  */
-const Utils = require('./../../../utils');
+const Utils = require('./../../../lib/dblink/utils');
 const _ = require('lodash');
 
 module.exports = (record, success, fail) => {
   const { json, tables } = record;
-  console.log(tables.curreny, 'tables...');
   const results = [];
   _.forEach(json.quotes, (v, k) => {
     results.push({
