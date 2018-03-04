@@ -11,6 +11,7 @@ const cfg = CONFIG.proxy.shadowJP;
 const getProxy = () => {
   return `http://${cfg.host}:${cfg.port}`;
 };
+
 class Proxy extends ProxyBase {
   constructor(config, options) {
     super();

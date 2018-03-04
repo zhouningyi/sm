@@ -23,6 +23,8 @@ module.exports = {
         });
         cb(result);
       });
+    }).catch((e) => {
+      console.log(e);
     });
   },
   parseType: 'json',

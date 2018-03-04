@@ -6,15 +6,12 @@
 */
 
 
-
-'use strict';
-
-let Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 
 module.exports = {
   getModel: (name) => {
     return {
-      name: name,
+      name,
       columns: {
         unique_id: {
           type: Sequelize.STRING(600),
@@ -78,4 +75,4 @@ module.exports = {
       }
     };
   }
-}
+};
