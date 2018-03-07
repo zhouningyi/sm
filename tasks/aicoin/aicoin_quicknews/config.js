@@ -14,7 +14,7 @@ module.exports = {
   urls: (cb, db_id) => {
     const urls = {};
     const pageSize = 10;
-    _.range(0, 40000, pageSize).forEach((idx) => {
+    _.range(0, 50000, pageSize).reverse().forEach((idx) => {
       const url = `https://www.aicoin.net.cn/api/data/moreFlash?pagesize=${pageSize}&lastid=${idx}`;
       urls[url] = { url };
     });
@@ -22,7 +22,8 @@ module.exports = {
   },
   parseType: 'json',
   periodInterval: 1000,
-  tables: ['aicoin_quicknews'],
+  models: ['aicoin_quicknews'],
+  // tables: ['aicoin_quicknews'],
   printInterval: 30,
   //
   parallN: 3,
