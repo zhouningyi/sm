@@ -1,0 +1,61 @@
+	{
+		"name": "area",
+		"desc": "边界",
+		"columns": {
+			"adcode": {
+				"type": "STRING",
+				"allowNull": false,
+				"unique": true,
+				"index": true,
+				"comment": "行政编码(id)"
+			},
+			"name": {
+				"type": "STRING",
+				"allowNull": false,
+				"index": true,
+				"comment": "名称"
+			},
+			"telecode": {
+				"type": "STRING",
+				"comment": "区号"
+			},
+			"population": {
+				"type": "INTEGER",
+				"comment": "最新人口"
+			},
+			"population_trend": {
+				"type": "JSONB",
+				"comment": "人口变化"
+			},
+			"center": {
+				"type": "GEOMETRY",
+				"comment": "中心"
+			},
+			"polygon": {
+				"type": "GEOMETRY",
+				"comment": "区块边界"
+			},
+			"children": {
+				"type": ["ARRAY", "JSONB"],
+				"comment": "子级行政区划"
+			},
+			"parent": {
+				"type": "JSONB",
+				"comment": "父级行政区划"
+			},
+			"level": {
+				"type": "STRING",
+				"comment": "行政等级"
+			},
+			"bbox": {
+				"type": ["ARRAY", "FLOAT"],
+				"comment": "包围4边形范围"
+			},
+			"lat": {
+				"type": "FLOAT"
+			},
+			"lng": {
+				"type": "FLOAT"
+			}
+		}
+	}

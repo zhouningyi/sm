@@ -1,0 +1,28 @@
+	{
+		"name": "aicoin_quicknews",
+		"desc": "aicoin新闻",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"url": {
+				"type": ["STRING", 200],
+				"comment": "url"
+			},
+			"title": {
+				"type": "TEXT",
+				"comment": "标题"
+			},
+			"time": {
+				"type": "DATE",
+				"comment": "发布时间"
+			},
+			"source": {
+				"type": ["STRING", 20],
+				"comment": "来源"
+			}
+		}
+	}

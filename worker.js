@@ -12,6 +12,8 @@ const _ = require('lodash');
 const Query = require('./query');
 const Processor = require('./processor');
 
+const { loadModelConfigs } = require('./model');
+
 const Utils = require('./utils');
 const dblink = require('./lib/dblink');
 
@@ -30,7 +32,8 @@ class Worker extends Events {
   }
   init() {
     this.reset();
-    this.initOutputModels().then(() => {
+    Promise.all([this.loadModelConfigs(), this.initOutputModels()])
+    .then(() => {
       this.initQuery(this.run.bind(this));
       this.initProcessor();
       this.noExit();
@@ -40,7 +43,7 @@ class Worker extends Events {
     this.isloop = true;
   }
 	// 获取所有存放数据的表的model，即把config.model里的model名字 替换成model对象
-  _getLinkObject(tableO, db_id_default) {
+  _getTableObject(tableO, db_id_default) {
     if (!tableO) return {};
     let table_schema;
     let table_name;
@@ -63,6 +66,10 @@ class Worker extends Events {
     const d = await dblink.addLink(o);
     return d;
   }
+  async loadModelConfigs() {
+    const cfg = await loadModelConfigs();
+    this.modelConfigs = _.keyBy(cfg, d => d.name);
+  }
   async initOutputModels() {
     const { config } = this;
     const { tables, models } = config;
@@ -80,7 +87,7 @@ class Worker extends Events {
       for (const i in tables) {
         const tableO = tables[i];
         table_name = typeof tableO === 'string' ? tableO : tableO.table_name;
-        o = this._getLinkObject(tableO, db_id);
+        o = this._getTableObject(tableO, db_id);
         model = await dblink.getTableModel(o);
         _.set(result, table_name, model);
         if (!model) Utils.warnExit(`config_${config.name}/config.tables.${table_name}不存在...`);
@@ -88,11 +95,12 @@ class Worker extends Events {
     }
     //
     if (models) {
+      const { modelConfigs } = this;
       for (const j in models) {
         const modelName = models[j];
-        const modelConfig = models[modelName];
+        const modelConfig = modelConfigs[modelName];
         if (!modelConfig) return console.log(`${modelName}的model不存在`);
-        model = dblink.getTableModel(modelConfig);
+        model = await dblink.getTableModel({ db_id: modelConfig.db_id || db_id, model: modelConfig });
         result[modelName] = model;
       }
     }
