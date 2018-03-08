@@ -1,0 +1,40 @@
+	{
+		"name": "kline",
+		"desc": "kline",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"volume": {
+				"type": "FLOAT",
+				"comment": "交易量"
+			},
+			"pair": {
+				"type":  ["STRING", 10],
+				"comment": "交易对"
+			},
+			"open_time": {
+				"type": "DATE",
+				"comment": "开始时间"
+			},
+			"open": {
+				"type": "FLOAT",
+				"comment": "开始价格"
+			},
+			"close": {
+				"type": "FLOAT",
+				"comment": "结束价格"
+			},
+			"high": {
+				"type": "FLOAT",
+				"comment": "最高价格"
+			},
+			"low": {
+				"type": "FLOAT",
+				"comment": "最低价格"
+			}
+		}
+	}
