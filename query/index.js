@@ -75,7 +75,7 @@ class Query extends Event {
       if (queryType === 'get') {
         return superagent
           .get(options.url)
-          // .proxy(options.proxy)
+          .proxy(options.proxy)
           .charset(this.config.encoding)
           .set(options.headers)
           .end((err, res) => {
