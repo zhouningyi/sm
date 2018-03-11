@@ -3,6 +3,7 @@
  */
 // const Gaodefy = require('./../../../lib/gaodefy');
 const _ = require('lodash');
+const Utils = require('./../../../lib/utils');
 
 const Binance = require('binance-api-node').default;
 
@@ -17,7 +18,7 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb) => {
-    const dates = 30;
+    const dates = 10;
     const urlBase = 'https://api.binance.com/api/v1/klines?interval=1m';
     const interval1Day = 1000 * 3600 * 24;
     const interval500 = 500 * 60 * 1000;
@@ -41,6 +42,7 @@ module.exports = {
   periodInterval: 1000,
   tables: ['kline_1m_binance'],
   printInterval: 30,
+  proxy: 'shadow',
   //
   parallN: 2,
 };

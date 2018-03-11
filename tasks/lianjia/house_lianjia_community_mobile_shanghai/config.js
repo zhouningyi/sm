@@ -20,9 +20,9 @@ module.exports = {
   },
   urls(cb, db_id) {
     dblink.query(db_id, `
-     select community_id from analysis.house_geo
-     where decoration is null
-     AND adcode like '31%'
+     SELECT community_id FROM analysis.house_geo
+     WHERE decoration IS null
+     AND adcode LIKE '31%'
     `)
     .then((ds) => {
       ds = ds.data;

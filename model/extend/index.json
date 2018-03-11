@@ -1,6 +1,8 @@
 
-
 [{
   "source": "kline",
   "name": "future_kline_1m_okex"
+}, {
+  "source": "kline",
+  "name": "kline_1m_okex"
 }]

@@ -31,7 +31,7 @@ module.exports = (record, success, fail) => {
   });
 
   //
-  Utils.batchUpsert(tables.future_kline_1m_okex, results)
+  Utils.batchUpsert(tables.kline_1m_okex, results)
   .then(() => success(null))
   .catch((e) => {
     // console.log(e.sql);
