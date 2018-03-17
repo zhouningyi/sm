@@ -4,6 +4,7 @@
 // const Gaodefy = require('./../../../lib/gaodefy');
 const _ = require('lodash');
 const Utils = require('./../../../lib/utils');
+const api = require('./api');
 
 const Binance = require('binance-api-node').default;
 
@@ -25,18 +26,16 @@ module.exports = {
     const now = new Date();
     const lowTime = now - interval1Day * dates;
     const result = {};
-    b.exchangeInfo().then((ds) => {
-      ds = ds.symbols.map(d => d.symbol);
-      let endTime = now;
-      while (endTime > lowTime) {
-        _.forEach(ds, (pair) => {
-          const url = `${urlBase}&symbol=${pair}&startTime=${endTime - interval500}&endTime=${endTime}`;
-          result[url] = { url, params: { pair } };
-        });
-        endTime -= interval500;
-      }
-      cb(result);
-    }).catch(e => console.log(e));
+    const ds = api.exchangeInfo.symbols.map(d => d.symbol);
+    let endTime = now.getTime();
+    while (endTime > lowTime) {
+      _.forEach(ds, (pair) => {
+        const url = `${urlBase}&symbol=${pair}&startTime=${endTime - interval500}&endTime=${endTime}`;
+        result[url] = { url, params: { pair } };
+      });
+      endTime -= interval500;
+    }
+    cb(result);
   },
   parseType: 'json',
   periodInterval: 1000,
@@ -44,5 +43,5 @@ module.exports = {
   printInterval: 30,
   proxy: 'shadow',
   //
-  parallN: 2,
+  parallN: 1,
 };

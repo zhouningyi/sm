@@ -45,6 +45,7 @@ class Query extends Event {
     const { url } = obj;
     const rInfo = this.browsers.getOne();
 
+
     const options = {
       headers: {
        // 'x-forwarded-for': rInfo.ip,
@@ -56,6 +57,7 @@ class Query extends Event {
     };
 
     options.headers = Utils.deepMerge(_.cloneDeep(options.headers), config.headers || {});
+
     _.forEach(options.headers, (v, k) => {
       if (typeof v === 'function') options.headers[k] = v();
     });

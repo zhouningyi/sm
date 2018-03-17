@@ -7,8 +7,7 @@ const _ = require('lodash');
 const md5 = require('md5');
 
 module.exports = (record, success, fail) => {
-  const { json } = record;
-  const { tables } = record;
+  const { tables, json, body } = record;
   const ds = _.get(json, 'data.content');
   const results = _.map(ds, (d) => {
     let source = Utils.cut(d.title, '【', '】');

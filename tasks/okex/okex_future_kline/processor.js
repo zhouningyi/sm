@@ -10,7 +10,7 @@ module.exports = (record, success, fail) => {
   // const ds = _.get(json, 'data.content');
 
   const results = _.map(json, (d) => {
-    const pair = params.pair;
+    const pair = params.pair.replace('_usd', '_usdt');// 都以usdt为标准
     const t = parseFloat(d[0], 10);
     const time = new Date(t);
     const open = d[1];
