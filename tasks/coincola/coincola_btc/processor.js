@@ -80,7 +80,7 @@ module.exports = (record, success, fail) => {
         // const volumeText = volumeNode.text();
         // const volumn_24h = getNumber(volumeText);
         let data = {
-            plat: 'coincola',
+            platform: 'coincola',
             area: 'global',
             userId: getUserId(href),
             saller_name,
