@@ -23,7 +23,7 @@ module.exports = (record, success, fail) => {
       lastid: d.id
     };
   });
-  // console.log(results, results.length, 'results.length...');
+  //
   dbUtils.batchUpsert(tables.aicoin_quicknews, results)
   .then(() => {
     success(null);
