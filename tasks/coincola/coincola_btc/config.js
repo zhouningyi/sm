@@ -10,7 +10,7 @@ module.exports = {
     name: 'coincola',
     desc: '比特币信息',
     time: {
-        value: 10,
+        value: 0.01,
         type: 'interval'
     },
     urls: (cb, db_id) => {
@@ -21,7 +21,7 @@ module.exports = {
         cb(result);
     },
     parseType: 'dom',
-    periodInterval: 10,
+    periodInterval: 1,
     tables: ['coincola'],
     printInterval: 30,
     // proxy: 'shadow',

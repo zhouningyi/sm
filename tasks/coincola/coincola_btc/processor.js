@@ -2,9 +2,10 @@
  *处理方法
  */
 const Utils = require('./../../../utils');
+const dbUtils = require('./../../../lib/dblink/utils');
 const _ = require('lodash');
 
-const pub = require('./readMsg');
+const rd = require('./readMsg');
 
 // for (var i = 0; i < 10; i++) {
 //     pub("z", i, "" + i);//发布10次
@@ -84,7 +85,7 @@ module.exports = (record, success, fail) => {
             userId: getUserId(href),
             saller_name,
             pay_type,
-            describe,
+            // describe,
             limits,
             // coin_name,
             // coin_full_name,
@@ -96,9 +97,10 @@ module.exports = (record, success, fail) => {
         };
         data = Utils.cleanObjectNull(data);
         results.push(data);
+        return;
     });
-    console.log(results);
-    pub("z", 0, "" + results);//发布10次
+    // rd.client.set('coincola-btc', { platform: "coincola", type: 'btc', results, time: new Date().getTime() })
+    // rd.pub("z", 0, { platform: "coincola", type: 'btc'});//发布10次
     // json = Gaodefy.parseDistrict(json);
 
     //需要每次先执行查询，然后本地对比差异，这里有点难用，有空再搞。
@@ -106,6 +108,13 @@ module.exports = (record, success, fail) => {
     //     .then(() => success(null))
     //     .catch((e) => {
     //         console.log(e);
+    //         return fail('xx原因');
+    //     });
+    // dbUtils.batchUpsert(tables.coincola, results)
+    //     .then(() => {
+    //         success(null);
+    //     })
+    //     .catch((e) => {
     //         return fail('xx原因');
     //     });
 };

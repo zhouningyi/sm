@@ -41,8 +41,11 @@ function dealWithMsg(message) {
 function pub(key, score, msg) {
     client.zadd(key, score, msg, function () {
         const bufferBody = new Buffer(JSON.stringify(msg), 'utf8');
-        client.publish("btc-msg", bufferBody);//client将member发布到btc-msg这个频道,go去处理
+        client.publish("virtual-currency", bufferBody);//client将member发布到btc-msg这个频道,go去处理
     });
 }
 
-module.exports = pub; 
+module.exports = {
+    pub,
+    client,
+}
