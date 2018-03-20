@@ -1,0 +1,47 @@
+    {
+        "name": "coincola",
+        "desc": "coincola新闻",
+        "columns": {
+            "unique_id": {
+                "type": [
+                    "STRING",
+                    50
+                ],
+                "allowNull": false,
+                "unique": true,
+                "comment": "唯一id"
+            },
+            "platform": {
+                "type": [
+                    "STRING",
+                    200
+                ],
+                "comment": "平台"
+            },
+            "userId": {
+                "type": [
+                    "STRING",
+                    200
+                ],
+                "comment": "用户id"
+            },
+            "saller_name": {
+                "type": [
+                    "STRING",
+                    20
+                ],
+                "comment": "卖家名"
+            },
+            "pay_type": {
+                "type": [
+                    "STRING",
+                    20
+                ],
+                "comment": "支付方式"
+            },
+            "price": {
+                "type": "INTEGER",
+                "comment": "价格"
+            }
+        }
+    }
