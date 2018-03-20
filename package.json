@@ -33,6 +33,7 @@
     "needle": "^1.1.2",
     "optimist": "^0.6.1",
     "pg": "^4.5.5",
+    "pg-escape": "^0.2.0",
     "pg_column": "^1.0.10",
     "random-useragent": "^0.3.0",
     "redis": "^2.8.0",

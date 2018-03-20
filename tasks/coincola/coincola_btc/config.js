@@ -22,7 +22,7 @@ module.exports = {
     },
     parseType: 'dom',
     periodInterval: 1,
-    tables: ['coincola'],
+    models: ['coincola'],
     printInterval: 30,
     // proxy: 'shadow',
     //
