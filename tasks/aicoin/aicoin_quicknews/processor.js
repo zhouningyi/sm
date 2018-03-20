@@ -22,6 +22,7 @@ module.exports = (record, success, fail) => {
       source,
     };
   });
+  //
   dbUtils.batchUpsert(tables.aicoin_quicknews, results)
   .then(() => {
     success(null);
