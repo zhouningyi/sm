@@ -110,11 +110,11 @@ module.exports = (record, success, fail) => {
     //         console.log(e);
     //         return fail('xx原因');
     //     });
-    // dbUtils.batchUpsert(tables.coincola, results)
-    //     .then(() => {
-    //         success(null);
-    //     })
-    //     .catch((e) => {
-    //         return fail('xx原因');
-    //     });
+    dbUtils.batchUpsert(tables.coincola, results)
+        .then(() => {
+            success(null);
+        })
+        .catch((e) => {
+            return fail('xx原因');
+        });
 };
