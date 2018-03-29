@@ -1,11 +1,11 @@
-    {
-        "name": "coincola",
-        "desc": "coincola新闻",
+{
+        "name": "coincola_platform",
+        "desc": "coincola_platform场外交易",
         "columns": {
             "unique_id": {
                 "type": [
                     "STRING",
-                    50
+                    200
                 ],
                 "allowNull": false,
                 "unique": true,
@@ -18,21 +18,43 @@
                 ],
                 "comment": "平台"
             },
-            "userId": {
+            "uid": {
                 "type": [
                     "STRING",
-                    200
+                    50
                 ],
-                "comment": "用户id"
+                "comment": "支付方式"
             },
-            "saller_name": {
+            "max_amount": {
+                "type": "FLOAT",
+                "comment": "卖家名"
+            },
+            "min_amount": {
+                "type": "FLOAT",
+                "comment": "卖家名"
+            },
+            "country_code": {
                 "type": [
                     "STRING",
                     20
                 ],
-                "comment": "卖家名"
+                "comment": "coutry"
             },
-            "pay_type": {
+            "currency": {
+                "type": [
+                    "STRING",
+                    50
+                ],
+                "comment": "支付方式"
+            },
+            "crypto_currency": {
+                "type": [
+                    "STRING",
+                    50
+                ],
+                "comment": "币"
+            },
+            "payment_provider": {
                 "type": [
                     "STRING",
                     20
