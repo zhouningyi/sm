@@ -1,0 +1,47 @@
+{
+    "name": "otc_user_order",
+        "desc": "记录各个平台场外交易用户挂单表",
+            "columns": {
+        "unique_id": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "allowNull": false,
+            "unique": true,
+            "comment": "唯一id, 挂单id"
+        },
+        "platform": {
+            "type": [
+                "STRING",
+                200
+            ],
+                "comment": "平台"
+        },
+        "uid": {
+            "type": [
+                "STRING",
+                50
+            ],
+                "comment": "用户id"
+        },
+        "userInfo": {
+            "type": [
+                "STRING",
+                500
+            ],
+            "comment": "用户详细信息可为空"
+        },
+        "crypto_currency": {
+            "type": [
+                "STRING",
+                50
+            ],
+                "comment": "币"
+        },
+        "price": {
+            "type": "FLOAT",
+                "comment": "价格"
+        }
+    }
+}
