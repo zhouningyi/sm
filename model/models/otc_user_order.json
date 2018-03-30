@@ -11,6 +11,11 @@
             "unique": true,
             "comment": "唯一id, 挂单id"
         },
+        "order_status": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
         "platform": {
             "type": [
                 "STRING",
@@ -19,10 +24,7 @@
                 "comment": "平台"
         },
         "uid": {
-            "type": [
-                "STRING",
-                50
-            ],
+            "type":  "INTEGER",
                 "comment": "用户id"
         },
         "userInfo": {

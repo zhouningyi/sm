@@ -4,6 +4,11 @@
 // const Gaodefy = require('./../../../lib/gaodefy');
 const _ = require('lodash');
 const dbUtils = require('./../../../lib/dblink/utils');
+const redis = require('redis');
+
+const client = redis.createClient(6379, '127.0.0.1');
+const _csrf = client.get('_csrf') || 'cHlTHxv7-9j50QOnSH_1YD3_2npvHaJohJcg';
+
 
 
 // const dblink = require('./../../../lib/dblink');
@@ -22,18 +27,17 @@ module.exports = {
         // result[url] = { url };
         // // result[`${url}_`] = { url };
         // cb(result);
-        const query = "country_code=CN&currency=&payment_provider=&limit=200&offset=0&sort_order=GENERAL&type=SELL&crypto_currency=LTC&_csrf=ksfp1oBq-ufbgcfCAzfU1YhNZi1HeZoLQDk4"
+        const query = `country_code=CN&currency=&payment_provider=&limit=200&offset=0&sort_order=GENERAL&type=SELL&crypto_currency=BTC&_csrf=${_csrf}`
         result[url] = { url, query };
         cb(result);
     },
     queryType: "post",
     headers: { content_type: "application/x-www-form-urlencoded",
-        "x-user-hash": "0c9c248f8cd39e317dadd992ab4e50b7",
-        cookie: "__cfduid=d90681908a9a73a094e777078932868881518182337; lang=en-US; _ga=GA1.2.1112399451.1518182350; ad_history_country_code=CN; __zlcmid=kth6qOxFDcV2D8; _gid=GA1.2.292117759.1521474839; coincola_session=s%3A-KnZFjMWevpHLII2U5otWJmH1hgfEne4.Nyeg9bcTqzleVkGWZ1Oj3u8%2BCqstHf6pnn3kTsttizY; _gat=1"
+        cookie: "__cfduid=d90681908a9a73a094e777078932868881518182337; lang=en-US; _ga=GA1.2.1112399451.1518182350; ad_history_country_code=CN; __zlcmid=kth6qOxFDcV2D8; ad_history_payment_provider=; ad_history_currency=; coincola_session=s%3AeBIYu1JffrDWEfHVGm_ZmQGK3mbj-cNd.yQV0DZVKZdx%2B3L59XGo9NPSTXEqGtYMZ6pvaedrC0hQ; _gid=GA1.2.755340795.1522339835"
     },
     parseType: 'json',
     periodInterval: 1,
-    models: ['coincola_platform'],
+    models: ['coincola_platform', 'otc_user_order'],
     printInterval: 30,
     // proxy: 'shadow',
     //
