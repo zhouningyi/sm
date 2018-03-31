@@ -23,7 +23,7 @@
             ],
                 "comment": "平台"
         },
-        "uid": {
+        "trade_id": {
             "type":  "INTEGER",
                 "comment": "用户id"
         },
