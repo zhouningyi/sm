@@ -8,6 +8,9 @@ const dblink = require('./../../../lib/dblink');
 
 const lodash = Utils.lodash;
 
+var url = require("url");
+var querystring = require("querystring");
+
 // const rd = require('./readMsg');
 
 // for (var i = 0; i < 10; i++) {
@@ -49,7 +52,11 @@ module.exports = async (record, success, fail) => {
             // unique_id: uid
         }
     })
-    const orders = await otc_user_order.findAll({ order_status: true }).then(t => {
+
+    const arg = url.parse(record.url).query;
+    const crypto_currency = querystring.parse(arg)['crypto_currency'];
+    console.log(crypto_currency)
+    const orders = await otc_user_order.findAll({ order_status: true, crypto_currency }).then(t => {
         return t.map(m => m.toJSON())
     })
     //  将response与库中数据对比，找出库中还不存在的新挂单，入库。
@@ -72,10 +79,6 @@ module.exports = async (record, success, fail) => {
 
     const cbs = lodash.differenceBy(exist, same, 'uid')
 
-    console.log(cbs.map(t => {
-        return { uid: t.uid,
-            price: t.price }
-    }));
     await otc_user_order.destroy({ where: { uid: cbs.map(t => t.uid) } }).then(function (projects) {
         // projects 是一个包含 Project 实例的数组，各实例id 是1, 2, 或 3
         // 这在实例执行时，会使用 IN查询
@@ -84,33 +87,5 @@ module.exports = async (record, success, fail) => {
     const totalOrder = cbs.concat(notExist);
     await otc_user_order.bulkCreate(totalOrder).then(t => t);
     await coincola_platform.bulkCreate(totalOrder).then(t => t);
-    // await dbUtils.batchUpsert(tables.coincola_platform, res)
-    //     .then((data) => {
-    //         console.log(data)
-    //         success(null);
-    //     })
-    //     .catch((e) => {
-    //         return fail('xx原因');
-    //     });
 
-    //  1.找出新的挂单入库，2已经存在的单子需要对比哪些单子是变化了的，入库coincola_platform记录表。
-    // dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['trend_url'] }).then((d) => {
-    //   d = d.data;
-    //   const urls = {};
-    //   _.forEach(d, (line) => {
-    //     const url = getUrl(line.trend_url);
-    //     urls[url] = { url };
-    //   });
-    //   cb(urls);
-    // });
-
-    
-    // dbUtils.batchUpsert(tables.coincola_platform, res)
-    //     .then((data) => {
-    //         console.log(data)
-    //         success(null);
-    //     })
-    //     .catch((e) => {
-    //         return fail('xx原因');
-    //     });
 };
