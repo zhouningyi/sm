@@ -26,9 +26,15 @@ module.exports = {
         const result = {};
         // result[url] = { url };
         // // result[`${url}_`] = { url };
+        const rs = ['BTC','ETH', 'USDT', 'BCH', 'LTC']
         // cb(result);
-        const query = `country_code=CN&currency=&payment_provider=&limit=200&offset=0&sort_order=GENERAL&type=SELL&crypto_currency=BTC&_csrf=${_csrf}`
-        result[url] = { url, query };
+        const getQuery = (r) => {
+            return `country_code=CN&currency=&payment_provider=&limit=200&offset=0&sort_order=GENERAL&type=SELL&crypto_currency=${r}&_csrf=${_csrf}`
+        }
+        // result[url] = { url, query };
+        _.forEach(rs, (r) => {
+            result[`${url}?crypto_currency=${r}`] = { url: `${url}?crypto_currency=${r}`, query: getQuery(r)}
+        });
         cb(result);
     },
     queryType: "post",
@@ -41,5 +47,5 @@ module.exports = {
     printInterval: 30,
     // proxy: 'shadow',
     //
-    parallN: 1,
+    parallN: 10,
 };
