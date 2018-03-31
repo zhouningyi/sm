@@ -25,9 +25,13 @@
         },
         "trade_id": {
             "type":  "INTEGER",
-                "comment": "用户id"
+                "comment": "挂单id"
         },
-        "userInfo": {
+        "user_id": {
+            "type": "INTEGER",
+            "comment": "用户id"
+        },
+        "user_info": {
             "type": [
                 "STRING",
                 500

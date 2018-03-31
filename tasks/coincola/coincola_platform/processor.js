@@ -47,6 +47,8 @@ module.exports = async (record, success, fail) => {
         return {
             ...t,
             trade_id,
+            user_id: t.advertiser.id,
+            user_info: JSON.stringify(t.advertiser),
             platform: 'coincola',
             unique_id: new Date().getTime() + '-' + index + '-' + trade_id,
             // unique_id: trade_id
