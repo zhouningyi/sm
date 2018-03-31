@@ -23,7 +23,7 @@
                     "STRING",
                     50
                 ],
-                "comment": "支付方式"
+                "comment": "guadan id"
             },
             "max_amount": {
                 "type": "FLOAT",
