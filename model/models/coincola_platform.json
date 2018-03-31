@@ -18,7 +18,7 @@
                 ],
                 "comment": "平台"
             },
-            "uid": {
+            "trade_id": {
                 "type": [
                     "STRING",
                     50

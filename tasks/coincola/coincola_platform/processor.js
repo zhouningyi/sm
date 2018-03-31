@@ -42,14 +42,14 @@ module.exports = async (record, success, fail) => {
     const { otc_user_order, coincola_platform } = record.models
 
     const res = results.map((t, index) => {
-        const uid = t.id;
+        const trade_id = t.id;
         delete t.id;
         return {
             ...t,
-            uid,
+            trade_id,
             platform: 'coincola',
-            unique_id: new Date().getTime() + '-' + index + '-' + uid,
-            // unique_id: uid
+            unique_id: new Date().getTime() + '-' + index + '-' + trade_id,
+            // unique_id: trade_id
         }
     })
 
@@ -60,26 +60,26 @@ module.exports = async (record, success, fail) => {
         return t.map(m => m.toJSON())
     })
     //  将response与库中数据对比，找出库中还不存在的新挂单，入库。
-    const notExist = lodash.differenceBy(res, orders, 'uid')
+    const notExist = lodash.differenceBy(res, orders, 'trade_id')
 
-    const exist = lodash.differenceBy(res, notExist, 'uid')
+    const exist = lodash.differenceBy(res, notExist, 'trade_id')
     // 从exist与order中对比，看price是否变化了，
 
     const same = lodash.differenceWith(
         exist,
         orders,
         (t1, t2) => {
-            if (t1.uid === t2.uid && t1.price !== t2.price) {
-                console.log(t1.uid, t1.price, '------', t2.uid, t2.price)
+            if (t1.trade_id === t2.trade_id && t1.price !== t2.price) {
+                console.log(t1.trade_id, t1.price, '------', t2.trade_id, t2.price)
                 return true;
             }
             return false;
         }
     );
 
-    const cbs = lodash.differenceBy(exist, same, 'uid')
+    const cbs = lodash.differenceBy(exist, same, 'trade_id')
 
-    await otc_user_order.destroy({ where: { uid: cbs.map(t => t.uid) } }).then(function (projects) {
+    await otc_user_order.destroy({ where: { trade_id: cbs.map(t => t.trade_id) } }).then(function (projects) {
         // projects 是一个包含 Project 实例的数组，各实例id 是1, 2, 或 3
         // 这在实例执行时，会使用 IN查询
     })
