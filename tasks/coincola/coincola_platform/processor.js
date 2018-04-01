@@ -46,7 +46,7 @@ module.exports = async (record, success, fail) => {
         delete t.id;
         return {
             ...t,
-            trade_id,
+            trade_id: trade_id,
             user_id: t.advertiser.id,
             user_info: JSON.stringify(t.advertiser),
             platform: 'coincola',
@@ -57,10 +57,15 @@ module.exports = async (record, success, fail) => {
 
     const arg = url.parse(record.url).query;
     const crypto_currency = querystring.parse(arg)['crypto_currency'];
-    console.log(crypto_currency)
-    const orders = await otc_user_order.findAll({ order_status: true, crypto_currency }).then(t => {
+    trade_ids = res.map(t => t.trade_id);
+    const orders = await otc_user_order.findAll({ where: {order_status: true, crypto_currency,
+        trade_id: {
+            $in: trade_ids
+        },
+    } }).then(t => {
         return t.map(m => m.toJSON())
     })
+    console.log(orders.length);
     //  将response与库中数据对比，找出库中还不存在的新挂单，入库。
     const notExist = lodash.differenceBy(res, orders, 'trade_id')
 

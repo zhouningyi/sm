@@ -24,11 +24,8 @@
                 "comment": "平台"
         },
         "trade_id": {
-            "type": [
-                "STRING",
-                50
-            ],
-                "comment": "挂单id"
+            "type": "INTEGER",
+            "comment": "挂单id"
         },
         "user_id": {
             "type": "INTEGER",
