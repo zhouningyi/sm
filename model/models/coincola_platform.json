@@ -19,10 +19,7 @@
                 "comment": "平台"
             },
             "trade_id": {
-                "type": [
-                    "STRING",
-                    50
-                ],
+                "type": "INTEGER",
                 "comment": "guadan id"
             },
             "max_amount": {
