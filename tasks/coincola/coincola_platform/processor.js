@@ -94,5 +94,6 @@ module.exports = async (record, success, fail) => {
     const totalOrder = cbs.concat(notExist);
     await otc_user_order.bulkCreate(totalOrder).then(t => t);
     await coincola_platform.bulkCreate(totalOrder).then(t => t);
+    process.exit();
 
 };
