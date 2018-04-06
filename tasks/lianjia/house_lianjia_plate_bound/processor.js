@@ -50,7 +50,6 @@ module.exports = async function (record, success, fail) {
     //
     try {
       await dUtils.batchUpsert(house_lianjia_plates, results);
-      console.log('done,,,');
     } catch (e) {
       console.log(e);
     }

@@ -153,11 +153,18 @@ class UrlModel extends Event {
     });
     this.sequelize.query(sql).then(urls => cb(urls));
   }
-  update(cb) {
+  async update(cb) {
     const sql = UtilSQL.updateFinishSQL(this.config);
-    this.sequelize.query(sql).then(() => {
-      cb();
-    });
+    let ds;
+    try {
+      ds = await this.sequelize.query(sql);
+      if (cb) cb();
+    } catch (e) {
+      this.print('update 出错...');
+      console.log(e);
+      if (cb) cb();
+    }
+    return ds;
   }
   // 清空
   clean(next) {

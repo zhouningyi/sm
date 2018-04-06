@@ -78,7 +78,7 @@ const updateFinishSQL = (options) => {
     BEGIN;
 
     UPDATE ${o.schema}.${o.tbName}
-    set "updatedAt" = now() - interval '10 years', last_update = NULL, placeholder = NULL
+    set "updatedAt" = now() - interval '40 years', last_update = NULL, placeholder = NULL
     WHERE unique_id in (
       SELECT unique_id FROM ${o.schema}.${o.tbName} WHERE placeholder = 0 OR ( placeholder is not null AND retry > 0) OR ( placeholder < ${now} - 1200000 ) FOR UPDATE
     );

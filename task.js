@@ -30,7 +30,6 @@ function checkExist(url) {
   if (!fs.existsSync(pth)) return Utils.warnExit(`${url}不存在`);
 }
 
-
 const findCorrectPath = (filepath, alltasks) => {
   fs.readdirSync(filepath).forEach((name) => {
     const pth = path.join(filepath, name);
@@ -101,7 +100,7 @@ class Tasks extends Event {
     this.tasks = tasks;
     this.onStart();
     async.series(tasks, () => {
-      console.log('async: all urls task finish');
+      this.print('async: urls task finish...');
       options.onlyUrls && process.send && process.send({ type: 'urls/finish' });
     });
   }
@@ -166,21 +165,22 @@ class Tasks extends Event {
     }).run();
   }
 
-  updateUrls(next) {
-    console.log('ready to updateurls');
+  async updateUrls(next) {
     this.urlModel.update(next);
   }
 
 	// 生成初始化的工作节点 这个部分需要考虑分布式扩展
-  createWorkers(next) {
+  async createWorkers(next) {
     const { config, urlModel } = this;
     const { db_id } = this.options;
+    const workers = this.workers = [];
     core.workers.forEach((cfg) => {
       const worker = new Worker(cfg, config, { db_id });
       worker.setUrlModel(urlModel);
       this.initEventsWorker(worker);
+      workers.push(worker);
     });
-    next();
+    if (next) next();
   }
   initEventsWorker(worker) {
     const n = this.config.extractN;
@@ -204,23 +204,38 @@ class Tasks extends Event {
   // 获取当前爬取的状态
   getStatus() {
   }
+  async restart() {
+    this.print('restart...', 'blue');
+    await this.updateUrls();
+    await this.createWorkers();
+    this.onStart();
+  }
   // 完成任务后执行的函数
-  final() {
-  	if (this.next) return this.next();
-  	this.print('已经完成爬取...');
-    this.send('done');
+  exit() {
     setTimeout(() => {
       console.log('process.exit....');
       process.exit();
     }, 100);
+  }
+  final() {
+    const { config } = this;
+    const { endType } = config;
+    if (this.next) return this.next();
+    this.print('已经完成爬取...');
+    this.send('done');
+    if (endType === 'restart') {
+      this.restart();
+    } else {
+      this.exit();
+    }
     process.send && process.send({ type: 'final' });
   }
   send(text) {
   	console.log(text);
   }
-  print(text) {
+  print(text, color) {
     const config = this.config;
-    Utils.print(`${config.name} || task || ${text}`);
+    Utils.print(`${config.name} || task || ${text}`, color);
   }
 }
 

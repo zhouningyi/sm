@@ -145,7 +145,6 @@ class Worker extends Events {
     this.onEmpty();
   }
   onDone(e) {
-    console.log('done...............');
     const { config } = this;
     if (e) {
       this.print('出现错误');

@@ -122,6 +122,19 @@ const defaultValidation = [{
   uiType: 'inputCode',
   valueType: 'string',
   value: '(cb) => cb(null);'
+}, {
+  key: 'endType',
+  name: '爬取结束后的行为',
+  desc: '',
+  uiType: 'select',
+  valueType: 'string',
+  value: null,
+  validate: {
+    options: {
+      重启: 'restart',
+      关闭: null
+    }
+  }
 }];
 
 // 默认的爬虫配置
@@ -154,6 +167,7 @@ const defaultConfig = {
   printInterval: 50,
   id: (url, param) => url,
   extractN: 500, // 一次性从数据库读取的数据
+  endType: null
 };
 
 const genConfig = (config) => {
