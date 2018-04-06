@@ -179,18 +179,18 @@ class Worker extends Events {
       // 暂停爬取的情况
       if (!this.isloop) return (this.curNextFunc = next);
       // 爬取结束有间隔的情况
-      query.query(record, (e, res) => {
-        if (e) {
-          this.fail(record, 'query response error');
-          return setTimeout(() => next(), interval);
-        }
+      query.query(record).then((res) => {
         record.res = res;
         this.onRecord(record).then(() => {
           setTimeout(() => next(), interval);
         }).catch((e) => {
-          console.log('processor error');
+          console.log('processor error', e);
           setTimeout(() => next(), interval);
         });
+      }).catch((e) => {
+        console.log('query error', e);
+        this.fail(record, 'query response error');
+        return setTimeout(() => next(), interval);
       });
     };
   }

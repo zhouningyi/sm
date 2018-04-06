@@ -8,6 +8,7 @@
 const cheerio = require('cheerio');
 const Event = require('events').EventEmitter;
 
+
 // 处理返回的数据
 class Processor extends Event {
   constructor(config, options) {

@@ -1,0 +1,43 @@
+	{
+		"name": "house_lianjia_plate",
+		"desc": "house_lianjia_plate",
+		"columns": {
+			"name": ["STRING", 12],
+			"plate_id": {
+				"type": ["STRING", 30],
+				"comment": "板块id",
+				"allowNull": false,
+				"unique": true
+			},
+			"polygon": "GEOMETRY",
+			"pinyin": ["STRING", 20],
+			"center":  "GEOMETRY",
+			"lat": "FLOAT",
+			"lng": "FLOAT",
+			"price_trend": "JSONB",
+			"adcode": ["STRING", 12],
+			"district_id_lianjia": ["STRING", 50],
+			"district_adcode":  ["STRING", 12],
+			"district_name": ["STRING", 22],
+			"house_count": "INTEGER",
+			"building_count":"INTEGER",
+			"community_count": "INTEGER",
+			"avg_price": "FLOAT",
+			"median_price": "FLOAT",
+			"avg_price_total": "FLOAT",
+			"median_price_total":"FLOAT",
+			"view_7_days": "FLOAT",
+			"views": "FLOAT",
+			"median_area": "FLOAT",
+			"avg_area":"FLOAT",
+			"total_area":"FLOAT",
+			"view_7_days_per_house":"FLOAT",
+			"views_per_house":"FLOAT",
+			"total_count":"FLOAT",
+			"sell_ratio":"FLOAT",
+			"plate_area":"FLOAT",
+			"house_count_per_square":"FLOAT",
+			"age":"INTEGER",
+			"selling_count":"INTEGER"
+		}
+	}

@@ -1,0 +1,16 @@
+	{
+		"name": "house_lianjia_city",
+		"desc": "house_lianjia_city",
+		"columns": {
+			"city_name":["STRING", 20], 
+			"adcode": ["STRING", 10],
+			"pinyin": {
+				"type": ["STRING", 10],
+				"unique": true
+			},
+			"selling_count": "INTEGER",
+			"lat": "FLOAT",
+			"lng": "FLOAT",
+			"renting_count": "INTEGER"
+		}
+	}

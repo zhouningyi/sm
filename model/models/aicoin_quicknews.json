@@ -23,6 +23,10 @@
 			"source": {
 				"type": ["STRING", 20],
 				"comment": "来源"
+			},
+			"lastid": {
+				"type": "INTEGER",
+				"comment": "最后id数"
 			}
 		}
 	}

@@ -1,0 +1,32 @@
+	{
+		"name": "exchange_wallet",
+		"desc": "kline",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"wallet_id": {
+				"type": ["STRING", 22],
+				"comment": "交易量"
+			},
+			"amount": {
+				"type":  "FLOAT",
+				"comment": "数量"
+			},
+			"balance": {
+				"type": "FLOAT",
+				"comment": "余额"
+			},
+			"transaction_id": {
+				"type": ["STRING", 32],
+				"comment": "transaction id"
+			},
+			"time": {
+				"type": "DATE",
+				"comment": "交易发生时间"
+			}
+		}
+	}

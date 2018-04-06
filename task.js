@@ -101,7 +101,7 @@ class Tasks extends Event {
     this.tasks = tasks;
     this.onStart();
     async.series(tasks, () => {
-      console.log('async: all task finish', tasks);
+      console.log('async: all urls task finish');
       options.onlyUrls && process.send && process.send({ type: 'urls/finish' });
     });
   }
@@ -184,15 +184,14 @@ class Tasks extends Event {
   }
   initEventsWorker(worker) {
     const n = this.config.extractN;
-    const self = this;
     worker.on('empty', () => {
-      self.print(`尝试提取${n}条爬虫url...`);
+      this.print(`尝试提取${n}条爬虫url...`);
       process.send && process.send({ type: 'preextract' });
       const t = getT();
-      self.extract(n, (urls) => {
+      this.extract(n, (urls) => {
         const urlsN = urls.length;
-        if (!urlsN) return self.final();
-        self.print(`已经提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
+        if (!urlsN) return this.final();
+        this.print(`已经提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
         const id_urls = urls.map(url => url.unique_id);
         process.send && process.send({ type: 'extract', payload: id_urls });
         worker.push(urls);

@@ -1,10 +1,13 @@
 /**
  * 形成一堆虚拟浏览器
  */
+
+const _ = require('lodash');
 const Event = require('events').EventEmitter;
 const Utils = require('./../utils');
 const UtilsReq = require('./utils');
 const getProxy = require('./proxy');
+const Browser = require('./browser');
 
 class Browsers extends Event {
   constructor(config, options) {
@@ -15,66 +18,67 @@ class Browsers extends Event {
     this.index = 0;
     this.create();
   }
-  create() {
-    const config = this.config;
-    this.reqs = [];
-    if (config.proxy) {
-      this.createProxy(config.proxy);
-    } else {
-      this.createDirect();
-    }
-  }
-  createProxy(proxy) {
-    const requestN = this.options.requestN;
-    const headers = this.config.headers || {};
-    const userAgentType = headers.userAgentType || 'mobile';
-    let ip,
-      userAgent,
-      prxy;
-    const reqs = this.reqs;
-    if (typeof (proxy) === 'string') {
-      proxy = getProxy(proxy);
-      proxy.on('ready', () => {
-        prxy = proxy.getOne();
-        userAgent = UtilsReq.getRandomUA(userAgentType);
-        ip = UtilsReq.getRandomIP();
-        reqs.push({
-          userAgent,
-          proxy: prxy
-        });
-        this.onReady();
-      });
-    }
-  }
-  createDirect() {
-    const requestN = this.options.requestN;
-    const headers = this.config.headers || {};
-    const userAgentType = headers.userAgentType || 'mobile';
-    const reqs = this.reqs;
-    let ip,
-      userAgent;
-    for (let i = 0; i < requestN; i++) {
-      ip = UtilsReq.getRandomIP();
-      userAgent = UtilsReq.getRandomUA(userAgentType);
-      reqs.push({
-        userAgent,
-        ip
-      });
-    }
+  async create() {
+    const { options, config } = this;
+    const { browserType, parallN = 1, headers = {}, proxy } = config;
+    const { userAgentType = 'mobile' } = headers;
+    let browserN = 0;
+    const browsers = this.browsers = [];
+    browserN = browserType === 'browser' ? Math.max(parallN, options.browserN) : options.requestN;
     //
-    this.onReady();
+    const getUserAgent = UtilsReq.getRandomUA(userAgentType);
+    const getIp = UtilsReq.getRandomIP();
+    const prxy = getProxy(proxy);
+    const genProxy = () => prxy ? prxy.getOne() : null;
+    //
+    const browserO = {
+      browserType,
+      headers: {
+        UserAgent: getUserAgent,
+        userAgent: getUserAgent,
+        'Proxy-Switch-Ip': proxy === 'abu' ? 'yes' : null,
+        'x-forwarded-for': getIp,
+        proxy: genProxy,
+        ...headers
+      }
+    };
+    _.range(browserN).forEach(() => {
+      const browser = new Browser(config, browserO);
+      browsers.push(browser);
+    });
+    this._initEvents();
+  }
+  _initEvents() {
+    const { browsers } = this;
+    let idx = 0;
+    _.forEach(browsers, (browser) => {
+      browser.on('ready', () => {
+        idx++;
+        if (idx === browsers.length) this.onReady();
+      });
+    });
   }
   getOne() {
-    this.index = (this.index + 1) % this.reqs.length;
-    return this.reqs[this.index];
+    const { index, browsers } = this;
+    this.index = (index + 1) % browsers.length;
+    return browsers[index];
   }
   onReady() {
     setTimeout(() => this.emit('ready'));
   }
+  async query(url, params = {}) {
+    const browser = this.getOne();
+    const ds = await browser.query({
+      url,
+      ...params
+    });
+    return ds;
+  }
 }
 
 Browsers.options = {
-  requestN: 5000
+  requestN: 500,
+  browserN: 10
 };
 
 module.exports = Browsers;
