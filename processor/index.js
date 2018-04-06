@@ -19,11 +19,14 @@ class Processor extends Event {
     this.index = 0;
   }
   process(record) {
+    const { config } = this;
+    const { parseType } = config;
+    let body;
     return new Promise((resolve, reject) => {
-      const res = record.res;
-      const config = this.config;
-      const parseType = config.parseType;
-      const body = record.body = res.body;
+      const { res } = record;
+      if (res) {
+        body = record.body = res.body;
+      }
 
       // 做一次变换 坏处是耗费了一些内存
       const failF = e => reject(e || 'processor error');
@@ -31,7 +34,7 @@ class Processor extends Event {
 
       if (parseType === 'dom') {
         record.$ = cheerio.load(body);
-      } else if (parseType === 'json') {
+      } else if (parseType === 'json' && body) {
         if (typeof (body) === 'string') {
           try {
             record.json = JSON.parse(body);

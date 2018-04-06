@@ -18,7 +18,6 @@ const _ = require('lodash');
 // 建立一堆虚拟浏览器 包括代理也在这个组件里完成
 const Browsers = require('./browsers');
 //
-// browserType
 class Query extends Event {
   constructor(config, options) {
     super();
@@ -38,9 +37,9 @@ class Query extends Event {
   onReady() {
     setTimeout(() => this.emit('ready'), 0);
   }
-  async query(record) {
+  async query(record, next) {
     const { params, url } = record;
-    const ds = await this.browsers.query(url, params);
+    const ds = await this.browsers.query(url, params, next);
     if (this.queryIndex % this.options.printInterval === 0) {
       this.print(`爬取第${this.queryIndex}条URL..`);
       process.send && process.send({ type: 'urls', payload: this.queryIndex });

@@ -20,11 +20,11 @@ class Browsers extends Event {
   }
   async create() {
     const { options, config } = this;
-    const { browserType, parallN = 1, headers = {}, proxy } = config;
+    const { browser, parallN = 1, headers = {}, proxy } = config;
     const { userAgentType = 'mobile' } = headers;
     let browserN = 0;
     const browsers = this.browsers = [];
-    browserN = browserType === 'browser' ? Math.max(parallN, options.browserN) : options.requestN;
+    browserN = browser ? Math.max(parallN, browser.count || 0, options.browserN) : options.requestN;
     //
     const getUserAgent = UtilsReq.getRandomUA(userAgentType);
     const getIp = UtilsReq.getRandomIP();
@@ -32,7 +32,7 @@ class Browsers extends Event {
     const genProxy = () => prxy ? prxy.getOne() : null;
     //
     const browserO = {
-      browserType,
+      browser,
       headers: {
         UserAgent: getUserAgent,
         userAgent: getUserAgent,
@@ -66,13 +66,12 @@ class Browsers extends Event {
   onReady() {
     setTimeout(() => this.emit('ready'));
   }
-  async query(url, params = {}) {
+  async query(url, params = {}, next) {
     const browser = this.getOne();
-    const ds = await browser.query({
+    browser.query({
       url,
       ...params
-    });
-    return ds;
+    }, next);
   }
 }
 

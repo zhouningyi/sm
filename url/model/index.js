@@ -123,7 +123,10 @@ class UrlModel extends Event {
         this.print(`url表已插入: ${count} 条数据`);
         insertIndex++;
         const sql = UtilSQL.getBigUpsertSQL(o, sqldata);
-        sequelize.query(sql).then(e => next());
+        sequelize.query(sql).then(() => next()).catch((e) => {
+          console.log(e);
+          this.print('url 表插入错误...');
+        });
       };
       tasks.push(func);
     });

@@ -180,13 +180,13 @@ class Worker extends Events {
   createJob(obj, i) {
     const { config, query } = this;
     const { interval = 0 } = config;
-    const record = this.createRecord(obj);
+    let record = this.createRecord(obj);
     return (next) => {
       // 暂停爬取的情况
       if (!this.isloop) return (this.curNextFunc = next);
       // 爬取结束有间隔的情况
-      query.query(record).then((res) => {
-        record.res = res;
+      query.query(record, (data) => {
+        record = { ...record, ...data };
         this.onRecord(record).then(() => {
           setTimeout(() => next(), interval);
         }).catch((e) => {

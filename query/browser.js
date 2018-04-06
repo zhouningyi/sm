@@ -4,6 +4,7 @@
 const puppeteer = require('puppeteer');
 const superagent = require('superagent');
 const request = require('request');
+const cp = require('child_process');
 //
 const charset = require('superagent-charset');
 
@@ -45,8 +46,9 @@ async function normalRequest(o) {
   });
 }
 
-const CHINESE_ENCODINGS = _.keyBy(['gbk', 'gb2312', 'cp936'], d => d);
-
+const _keyBy = d => d;
+const CHINESE_ENCODINGS = _.keyBy(['gbk', 'gb2312', 'cp936'], _keyBy);
+const RESPONSE_TYPES = _.keyBy(['script'], _keyBy);
 class Browser extends Event {
   constructor(config, options) {
     super();
@@ -55,9 +57,10 @@ class Browser extends Event {
     this.init();
   }
   async init() {
-    const { browserType } = this.options;
-    if (browserType === 'browser') {
+    const { browser } = this.options;
+    if (browser) {
       this.chrome = await puppeteer.launch();
+      this.page = await this.chrome.newPage();
     }
     this.onReady();
   }
@@ -68,19 +71,50 @@ class Browser extends Event {
     });
     return headers;
   }
-  async createPages() {
-    this.page = await this.chrome.newPage();
-  }
-  async query(params) {
-    const { browserType } = this.options;
-    if (browserType === 'browser') {
-      return await this.queryBrowser(params);
+  async query(o, next) {
+    const { browser } = this.options;
+    if (browser) {
+      return await this.queryBrowser(o, next);
     } else {
-      return await this.queryDirect(params);
+      return await this.queryDirect(o, next);
     }
   }
-  async queryBrowser(params) {
-    const headers = this.createHeader();
+  _initEventsPage(page) {
+    const { output = {} } = this.config.browser;
+    const { type, filter } = output;
+    const datas = this.datas = {};
+    if (type && type in RESPONSE_TYPES) {
+      const ds = datas[type] = datas[type] || [];
+      page.on('response', async (resp) => {
+        const url = resp._url;
+        const resourceType = resp._request._resourceType;
+        if (resourceType === type) {
+          if (filter({ ...resp, url })) {
+            const data = await resp.text();
+            ds.push(data);
+          }
+        }
+      });
+    }
+  }
+  async queryBrowser(o, next) {
+    const { url } = o;
+    const { page, config } = this;
+    const { browser } = config;
+    this._initEventsPage(page, next);
+    await page.goto(url, {
+      waitUntil: 'networkidle0',
+    });
+    if (browser.operate) {
+      await browser.operate(page);
+    }
+    const { datas } = this;
+    next(datas);
+    // const file = '/Users/zhouningyi/git/hn.pdf';
+    // await page.pdf({ path: file, format: 'A4' });
+    // cp.execSync(`open ${file}`);
+    // process.exit();
+    // const headers = this.createHeader();
   }
   _getOptions(params) {
     const { parseType, encoding, queryType = 'get', queryTimeout = 10 * 1000 } = this.config;
@@ -98,7 +132,7 @@ class Browser extends Event {
   onResponse(ds) {
     this.emit('response', { data: ds });
   }
-  async queryDirect(params) {
+  async queryDirect(params, next) {
     const o = this._getOptions(params);
     let ds;
     if (o.encoding in CHINESE_ENCODINGS) {
@@ -106,8 +140,12 @@ class Browser extends Event {
     } else {
       ds = await normalRequest(o);
     }
-    this.onResponse(ds);
-    return ds;
+    const data = {
+      res: ds
+    };
+    next(data);
+    this.onResponse(data);
+    return data;
   }
 }
 Browser.options = {
