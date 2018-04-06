@@ -22,7 +22,7 @@ class Processor extends Event {
     const { config } = this;
     const { parseType } = config;
     let body;
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const { res } = record;
       if (res) {
         body = record.body = res.body;
@@ -51,7 +51,7 @@ class Processor extends Event {
       }
       //
       const processor = config.processing || config.processor;
-      processor(record, successF, failF);
+      await processor(record, successF, failF);
       this.index++;
     });
   }

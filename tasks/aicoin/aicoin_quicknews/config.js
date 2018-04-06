@@ -16,22 +16,24 @@ module.exports = {
     Cookie: cookie,
     Host: 'www.aicoin.net.cn',
     host: 'www.aicoin.net.cn',
-    Referer: 'https://www.aicoin.net.cn/'
+    Referer: 'https://www.aicoin.net.cn/',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
   },
   urls: (cb, db_id) => {
     const urls = {};
-    const pageSize = 10;
+    const pageSize = 100;
     _.range(0, 50000, pageSize).reverse().forEach((idx) => {
       const url = `https://www.aicoin.net.cn/api/data/moreFlash?pagesize=${pageSize}&lastid=${idx}`;
-      urls[url] = { url };
+      urls[url] = { url, params: { lastid: idx } };
     });
     cb(urls);
   },
   parseType: 'json',
   periodInterval: 1000,
+  // proxy: 'abu',
   models: ['aicoin_quicknews'],
   // tables: ['aicoin_quicknews'],
   printInterval: 30,
   //
-  parallN: 3,
+  parallN: 1,
 };

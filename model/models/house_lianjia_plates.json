@@ -1,6 +1,6 @@
 	{
-		"name": "house_lianjia_plate",
-		"desc": "house_lianjia_plate",
+		"name": "house_lianjia_plates",
+		"desc": "house_lianjia_plates",
 		"columns": {
 			"name": ["STRING", 12],
 			"plate_id": {

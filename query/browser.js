@@ -57,10 +57,12 @@ class Browser extends Event {
     this.init();
   }
   async init() {
-    const { browser } = this.options;
+    const { browser } = this.config;
     if (browser) {
       this.chrome = await puppeteer.launch();
       this.page = await this.chrome.newPage();
+      const viewport = _.get(browser, 'options.viewport');
+      if (viewport) this.page.setViewport(viewport);
     }
     this.onReady();
   }
@@ -80,7 +82,7 @@ class Browser extends Event {
     }
   }
   _initEventsPage(page) {
-    const { output = {} } = this.config.browser;
+    const { output = {}, onRequestStart } = this.config.browser;
     const { type, filter } = output;
     const datas = this.datas = {};
     if (type && type in RESPONSE_TYPES) {
@@ -108,12 +110,15 @@ class Browser extends Event {
     if (browser.operate) {
       await browser.operate(page);
     }
-    const { datas } = this;
-    next(datas);
     // const file = '/Users/zhouningyi/git/hn.pdf';
     // await page.pdf({ path: file, format: 'A4' });
     // cp.execSync(`open ${file}`);
     // process.exit();
+
+    //
+    const { datas } = this;
+    next(datas);
+
     // const headers = this.createHeader();
   }
   _getOptions(params) {

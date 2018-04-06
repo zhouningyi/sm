@@ -1,10 +1,14 @@
 /**
  * 爬取配置
  */
-const Utils = require('./../../../../lib/utils');
-const Models = require('./../../../../model');
+const Utils = require('./../../../lib/utils');
+const Models = require('./../../../model');
+const dblink = require('./../../../lib/dblink');
+const _ = require('lodash');
 
-const getURL = adcode => `http://ajax.lianjia.com/ajax/mapsearch/area/bizcircle?city_id=${adcode}`;
+function getURL(pinyin) {
+  return `https://${pinyin}.lianjia.com/ditu/`;
+}
 
 module.exports = {
   version: 2,
@@ -14,24 +18,46 @@ module.exports = {
     type: 'interval',
     value: 1
   },
-  urls(cb) {
-    Models.house_lianjia_city.findAll({}).then((ds) => {
+  urls(cb, db_id) {
+    dblink.findAll(db_id, 'public', 'house_lianjia_cities', { where: {
+      // adcode: {
+      //   $like: '31%'
+      // }
+    } }).then((ds) => {
       const urls = {};
-      ds.forEach((d) => {
-        let url = getURL(d.adcode);
-        urls[url] = { url };
-        // 济南的特殊情况
-        url = getURL(`${d.adcode.toString().substring(0, 5)}1`);
+      _.forEach(ds.data, (d) => {
+        const url = getURL(d.pinyin);
         urls[url] = { url };
       });
       cb(urls);
     });
   },
+  browser: {
+    type: 'chrome',
+    options: {
+      viewport: {
+        width: 2000,
+        height: 1800,
+        deviceScaleFactor: 0.3
+      }
+    },
+
+    operate: async (page) => {
+      const ds = await page.$$('.BMapLabel');
+      if (!ds || !ds.length) return;
+      page.click('.BMapLabel ');// 点击聚类后放大
+      await Utils.delay(5000);
+    },
+    output: {
+      type: 'script',
+      filter: resp => resp.url.indexOf('biz') !== -1
+    }
+  },
   parseType: 'json',
   processing: require('./processor'),
   //
-  poolSize: 1,
+  parallN: 3,
   queryInterval: 0,
   periodInterval: 1500,
-  models: ['house_lianjia_plate']
+  models: ['house_lianjia_plates']
 };

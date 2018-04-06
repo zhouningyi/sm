@@ -15,7 +15,13 @@ module.exports = {
   urls: (cb, db_id) => {
     dblink.upsert(db_id, 'public', 'areas', { adcode: '100000', name: '中国', level: 'country' })
     .then(() => {
-      dblink.findAll(db_id, 'public', 'areas', { where: { polygon: null } }).then((ds) => {
+      dblink.findAll(db_id, 'public', 'areas', { where: {
+        $or: [{
+          center: null
+        }, {
+          polygon: null
+        }]
+      } }).then((ds) => {
         const result = {};
         _.forEach(ds.data, (d) => {
           const url = Gaodefy.getUrlDistrict(d.name, d.level);
@@ -31,6 +37,11 @@ module.exports = {
   periodInterval: 1000,
   tables: ['areas'],
   printInterval: 30,
+  finalize: () => {
+    return; // /以后再补全
+    `update areas
+    set polygon = st_makevalid(polygon)`;
+  },
   //
   parallN: 3,
 };
