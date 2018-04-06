@@ -176,19 +176,18 @@ class UrlModel extends Event {
     this.sequelize.query(sql).then(ds => (cb && cb(ds)));
   }
   success(obj, cb) {
-  	const config = this.config;
-  	const sql = UtilSQL.getSuccessSQL({
-  		name: config.name,
-  		unique_id: obj.unique_id,
-  	});
-  	this.sequelize.query(sql).then(ds => (cb && cb(ds)));
-  }
-  getCount(cb) { // 获取任务总量
-    const sql = UtilSQL.getTaskCountSQL(this.config);
-    this.sequelize.query(sql).then((ds) => {
-      const count = ds[0][0].count;
-      this.print(`本次实际任务总量${count}次`);
+    const { config, sequelize } = this;
+    const sql = UtilSQL.getSuccessSQL({
+      name: config.name,
+      unique_id: obj.unique_id,
     });
+    sequelize.query(sql).then(ds => (cb && cb(ds)));
+  }
+  async printCount() { // 获取任务总量
+    const sql = UtilSQL.getTaskCountSQL(this.config);
+    const ds = await this.sequelize.query(sql);
+    const count = _.get(ds, '0.0.count');
+    this.print(`本次实际任务总量${count}次`);
   }
   print(text) {
     Utils.print(`${this.config.name} || url_model || ${text}`);

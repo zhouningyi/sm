@@ -108,15 +108,19 @@ class Worker extends Events {
     return result;
   }
   createRecord(obj) {	// 建立一个record对象 在各个组之间传递
-    const config = this.config;
+    const { config } = this;
     return {
       name: config.name,
+      //
+      urlModel: this.urlModel,
       models: this.models,
       tables: this.models,
       params: obj.params,
       url: obj.url,
       unique_id: obj.unique_id,
-      query: obj.query
+      query: obj.query,
+      page: null, // 页面
+      json: null, // ajax请求返回
     };
   }
   noExit() {	// 不让程序在暂停的时候自动退出
@@ -126,8 +130,8 @@ class Worker extends Events {
   initQuery(next) {
     const query = this.query = new Query(this.config);
     query
-				.on('ready', this.onReady.bind(this))
-				.on('record', this.onRecord.bind(this));
+    .on('ready', this.onReady.bind(this))
+    .on('record', this.onRecord.bind(this));
   }
 	// 处理器
   initProcessor() {
@@ -140,6 +144,14 @@ class Worker extends Events {
     setTimeout((() => this.emit('ready')));
     this.onEmpty();
   }
+  onDone(e) {
+    console.log('done...............');
+    if (e) {
+      this.print('出现错误');
+      process.exit(); // ////////////////////////////////////////////////////////////注意
+    }
+    this.onEmpty();
+  }
   run() {
     this.resume();
     setTimeout(this.onEmpty.bind(this));
@@ -147,40 +159,26 @@ class Worker extends Events {
 	// 有新的url
   push(records) {
     this.print('开始执行任务');
-    this.urlModel.getCount();
+    this.urlModel.printCount();
     const jobs = this.jobs = this.createJobs(records);
-    const config = this.config;
-    const self = this;
-    const done = ((e) => {
-      console.log('done...............');
-      if (e) {
-        self.print('出现错误');
-        process.exit(); // ////////////////////////////////////////////////////////////注意
-      }
-      this.onEmpty();
-    });
-
-    async.parallelLimit(jobs, this.config.parallN || this.config.poolSize || 1, done);
+    const { config } = this;
+    const { parallN, poolSize } = config;
+    async.parallelLimit(jobs, parallN || poolSize || 1, this.onDone.bind(this));
   }
   createJobs(urls) {
     const jobs = [];
-    const self = this;
-    _.forEach(urls, (obj, i) => jobs.push(self.createJob(obj, i)));
+    _.forEach(urls, (obj, i) => jobs.push(this.createJob(obj, i)));
     this.print(`创建job(行任务)${jobs.length}个`);
     return jobs;
   }
   createJob(obj, i) {
     const { config, query } = this;
+    const { interval = 0 } = config;
     const record = this.createRecord(obj);
-    const { url, params } = record;
-    const interval = this.config.interval || 0;
     return (next) => {
-				// 暂停爬取的情况
-      if (!this.isloop) {
-        this.curNextFunc = next;
-        return;
-      }
-			// 爬取结束有间隔的情况
+      // 暂停爬取的情况
+      if (!this.isloop) return (this.curNextFunc = next);
+      // 爬取结束有间隔的情况
       query.query(record, (e, res) => {
         if (e) {
           this.fail(record, 'query response error');
