@@ -8,8 +8,9 @@
 				"unique": true,
 				"comment": "唯一id"
 			},
+			"last_index": "INTEGER",
 			"url": {
-				"type": ["STRING", 200],
+				"type": ["STRING", 300],
 				"comment": "url"
 			},
 			"title": {
@@ -21,7 +22,7 @@
 				"comment": "发布时间"
 			},
 			"source": {
-				"type": ["STRING", 20],
+				"type": ["STRING", 40],
 				"comment": "来源"
 			},
 			"lastid": {

@@ -31,7 +31,7 @@ class UrlGen extends Events {
     const { config } = this;
     let urls = config.urls || config.url;
     this.t = getT();
-    this.print('开始生成urls...');
+    this.print('开始生成urls...', 'gray');
     if (typeof (urls) === 'function') {
       urls = urls.bind(config);
       urls(this.process.bind(this), this.options.db_id);
@@ -44,15 +44,13 @@ class UrlGen extends Events {
     check(urls);
     if (!Array.isArray(urls)) urls = _.values(urls);
     this.print(`生成${urls.length}条任务(内存), ${getDt(this.t)}`);
-    setTimeout((() => this.onReady(urls)));
+    this.onReady(urls);
   }
   onReady(urls) {
-    this.emit('urls', {
-      urls
-    });
+    setTimeout(() => this.emit('urls', { urls }));
   }
-  print(text) {
-    Utils.print(`${this.config.name} || url_gen || ${text}`);
+  print(text, color) {
+    Utils.print(`${this.config.name} || url_gen || ${text}`, color);
   }
 }
 

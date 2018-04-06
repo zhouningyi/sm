@@ -9,7 +9,7 @@ module.exports = {
   name: 'aicoin_quicknews',
   desc: 'aicoin的信息',
   time: {
-    value: 10,
+    value: 0.01,
     type: 'interval'
   },
   headers: {
@@ -20,12 +20,14 @@ module.exports = {
     Referer: 'https://www.aicoin.net.cn/',
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'
   },
-  urls: (cb, db_id) => {
+  urls: async (cb, db_id) => {
     const urls = {};
-    // dblink.findAll(db_id, 'public', 'aicoin_quicknews', {
-    // });
-    const pageSize = 100;
-    _.range(40000, 40200, pageSize).reverse().forEach((idx) => {
+    const { data } = await dblink.query(db_id, 'SELECT MAX(LASTID) FROM public.aicoin_quicknews');
+    const maxId = _.get(data, '0.max') || 10000;
+    const pageSize = 5;
+    const delta = 200;
+    _.range(maxId, maxId + delta, pageSize).reverse().forEach((idx) => {
+      // console.log(idx, 'idx');
       const url = `https://www.aicoin.net.cn/api/data/moreFlash?pagesize=${pageSize}&lastid=${idx}`;
       urls[url] = { url, params: { lastid: idx } };
     });
@@ -37,7 +39,11 @@ module.exports = {
   models: ['aicoin_quicknews'],
   // tables: ['aicoin_quicknews'],
   printInterval: 30,
-  endType: 'restart',
+  // extractN: 5,
+  end: {
+    type: 'restart',
+    isClean: true,
+  },
   //
   parallN: 1,
 };

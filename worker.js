@@ -163,8 +163,7 @@ class Worker extends Events {
   }
 	// 有新的url
   push(records) {
-    this.print('开始执行任务');
-    this.urlModel.printCount();
+    this.print('开始执行任务', 'gray');
     const jobs = this.jobs = this.createJobs(records);
     const { config } = this;
     const { parallN, poolSize } = config;
@@ -172,7 +171,9 @@ class Worker extends Events {
   }
   createJobs(urls) {
     const jobs = [];
-    _.forEach(urls, (obj, i) => jobs.push(this.createJob(obj, i)));
+    _.forEach(urls, (obj, i) => {
+      jobs.push(this.createJob(obj, i));
+    });
     this.print(`创建job(行任务)${jobs.length}个`);
     return jobs;
   }
@@ -221,7 +222,6 @@ class Worker extends Events {
     this.urlModel.fail(record);
   }
   onEmpty() {
-    console.log('onEmpty\n\n\n');
     setTimeout((() => this.emit('empty')));
   }
   pause(text) {
@@ -247,8 +247,8 @@ class Worker extends Events {
       processIndex: stPorcessor.index
     };
   }
-  print(text) {
-    Utils.print(`${this.config.name} || worker || id ${this.id}: ${text}`);
+  print(text, color) {
+    Utils.print(`${this.config.name} || worker || id ${this.id}: ${text}`, color);
   }
 }
 

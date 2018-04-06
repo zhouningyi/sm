@@ -84,25 +84,21 @@ class Tasks extends Event {
     if (!config.processing) config.processing = require(urlProcessor);
     config = this.config = Utils.genConfig(config);
   }
-  init(next) {
+  async init(next) {
     const { options, config } = this;
-    const empty = next => next();
+    // const empty = next => next();
     const isClean = options.isNeedCleanModel;
     const isUpdate = isClean || options.isNeedUpdateModel;// 如果清空了 必须update
-    const tasks = [
-      cb => this.initUrlModel(cb),
-      isClean ? cb => this.cleanModel(cb) : empty,
-      cb => this.runUrlModel(cb),
-      options.loopUpdate ? cb => this.updateUrls(cb) : empty,
-      isUpdate ? cb => this.createUrls(cb) : empty,
-      !options.onlyUrls ? cb => this.createWorkers(cb) : empty,
-    ];
-    this.tasks = tasks;
+    await this.initUrlModel();
+    if (isClean) await this.dropModel();
+    await this.runUrlModel();
+    if (isUpdate) await this.createUrls();
+    await this.updateUrls();
+    if (!options.onlyUrls) await this.createWorkers();
+    await this.urlModel.printCount();
+    this.print('async: urls task finish...', 'gray');
+    if (options.onlyUrls && process.send) process.send({ type: 'urls/finish' });
     this.onStart();
-    async.series(tasks, () => {
-      this.print('async: urls task finish...');
-      options.onlyUrls && process.send && process.send({ type: 'urls/finish' });
-    });
   }
   onStart() {
     this.send('start');
@@ -114,59 +110,69 @@ class Tasks extends Event {
     return d;
   }
   // 建立url的model
-  initUrlModel(next) {
+  async initUrlModel(next) {
     const { config } = this;
     const { url_db_id } = this.options;
-    this.addLink(url_db_id).then(() => {
-      dblink.getLinkById(url_db_id).then((urlLink) => {
-        this.urlModel = new UrlModel(config, {}, urlLink);
-        this.urlGen = new UrlGen(config, {
-          db_id: this.options.db_id
-        }, urlLink);
-
-        process.on('SIGINT', () => {
-          this.urlModel.close(); // 进程结束前释放连接
-          console.log('i receive sigint!');
-          process.exit(1);
-        });
-        process.on('exit', (code, signal) => {
-          console.log('i will exit', code, signal, this.name, this.options, this.tasks);
-          this.urlModel.close(); // 进程结束前释放连接
-        });
-        next();
-      }).catch((e) => {
-        console.log(e);
-        Utils.warnExit('url数据库连接出错');
-      });
-    }).catch((e) => {
-      console.log(e);
+    let urlLink;
+    try {
+      urlLink = await this.addLink(url_db_id);
+    } catch (e) {
+      this.print('initUrlModel', 'red');
       Utils.warnExit('url数据库连接出错');
+    }
+    this.urlModel = new UrlModel(config, {}, urlLink);
+    this.urlGen = new UrlGen(config, {
+      db_id: this.options.db_id
+    }, urlLink);
+
+    process.on('SIGINT', () => {
+      this.urlModel.close(); // 进程结束前释放连接
+      console.log('i receive sigint!');
+      process.exit(1);
     });
-
-
-    // this.urlModel.on('ready', () => {
-    // });
+    process.on('exit', (code, signal) => {
+      console.log('i will exit', code, signal, this.name, this.options, this.tasks);
+      this.urlModel.close(); // 进程结束前释放连接
+    });
+    if (next) next();
   }
   // 执行url
   runUrlModel(next) {
-    this.urlModel.on('ready', () => next()).run();
+    return new Promise((resolve, reject) => {
+      this.urlModel.on('ready', () => {
+        if (next) next();
+        resolve();
+      }).run();
+    });
   }
 
-  cleanModel(next) { // 清除旧UrlDb的内容
-    this.urlModel.clean(next);
+  async dropModel(next) { // 删除(drop) 旧UrlDb的内容
+    await this.urlModel.drop(next);
   }
-  createUrls(next) {	// 生成初始化的url
-    const urlModel = this.urlModel;
-    this.urlGen.on('urls', (obj) => {	// 开始生成一堆url
-      const urls = obj.urls;
-      urlModel.upsert(urls, () => {
-        next();
+
+  async cleanModel(next) { // 清除(clean)  旧UrlDb的内容
+    await this.urlModel.clean(next);
+  }
+  async createUrls() {	// 生成初始化的url
+    const { urlModel, urlGen } = this;
+    return new Promise((resolve, reject) => {
+      // 开始生成一堆url
+      urlGen.removeAllListeners('urls');
+      urlGen.on('urls', (obj) => {
+        const { urls } = obj;
+        urlModel.upsert(urls).then(() => {
+          resolve();
+        }).catch((e) => {
+          console.log(e);
+          resolve();
+        });
       });
-    }).run();
+      urlGen.run();
+    });
   }
 
-  async updateUrls(next) {
-    this.urlModel.update(next);
+  async updateUrls() {
+    await this.urlModel.update();
   }
 
 	// 生成初始化的工作节点 这个部分需要考虑分布式扩展
@@ -185,13 +191,13 @@ class Tasks extends Event {
   initEventsWorker(worker) {
     const n = this.config.extractN;
     worker.on('empty', () => {
-      this.print(`尝试提取${n}条爬虫url...`);
+      // this.print(`尝试提取${n}条爬虫url...`, 'gray');
       process.send && process.send({ type: 'preextract' });
       const t = getT();
       this.extract(n, (urls) => {
         const urlsN = urls.length;
         if (!urlsN) return this.final();
-        this.print(`已经提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
+        this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
         const id_urls = urls.map(url => url.unique_id);
         process.send && process.send({ type: 'extract', payload: id_urls });
         worker.push(urls);
@@ -204,9 +210,14 @@ class Tasks extends Event {
   // 获取当前爬取的状态
   getStatus() {
   }
-  async restart() {
+  async restart(end) {
+    const isClean = end.isClean || false;
+    const isUpdate = end.isUpdate || false;
     this.print('restart...', 'blue');
+    if (isClean) await this.cleanModel();
     await this.updateUrls();
+    if (isClean || isUpdate) await this.createUrls();
+    await this.urlModel.printCount();
     await this.createWorkers();
     this.onStart();
   }
@@ -219,12 +230,12 @@ class Tasks extends Event {
   }
   final() {
     const { config } = this;
-    const { endType } = config;
+    const { end } = config;
     if (this.next) return this.next();
     this.print('已经完成爬取...');
     this.send('done');
-    if (endType === 'restart') {
-      this.restart();
+    if (end && (end === 'restart' || end.type === 'restart')) {
+      this.restart(end);
     } else {
       this.exit();
     }

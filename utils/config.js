@@ -23,7 +23,7 @@ const checkConfig = (cfg) => {
   if (!(cfg.parseType.toLowerCase() in ptypes)) warnExit('parseType 错误');
   // 警告
   // if (!cfg.models) warn(`${warnHead}建议配置models, models格式为 [model1, model2..]`);
-  if (!cfg.tables) warn(`${warnHead}建议配置tables, tables格式为 [table1, table2..]`);
+  // if (!cfg.tables) warn(`${warnHead}建议配置tables, tables格式为 [table1, table2..]`);
   if (!cfg.time) warn(`${warnHead}最好有time字段(时间或时间段) 单位为天 是任务需要更新的最小单位`);
   if (cfg.params) warn(`${warnHead}config.arams变量已经弃用`);
   if (cfg.timestamp) warn(`${warnHead}config.timestamp已经弃用 请改config.time`);
@@ -122,20 +122,22 @@ const defaultValidation = [{
   uiType: 'inputCode',
   valueType: 'string',
   value: '(cb) => cb(null);'
-}, {
-  key: 'endType',
-  name: '爬取结束后的行为',
-  desc: '',
-  uiType: 'select',
-  valueType: 'string',
-  value: null,
-  validate: {
-    options: {
-      重启: 'restart',
-      关闭: null
-    }
-  }
-}];
+},
+// {
+//   key: 'end',
+//   name: '爬取结束后的行为',
+//   desc: '',
+//   uiType: 'select',
+//   valueType: 'string',
+//   value: null,
+//   validate: {
+//     options: {
+//       重启: 'restart',
+//       关闭: null
+//     }
+//   }
+// }
+];
 
 // 默认的爬虫配置
 const defaultConfig = {
