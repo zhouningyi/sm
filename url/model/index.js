@@ -116,7 +116,7 @@ class UrlModel extends Event {
     _.forEach(sqldataList, (sqldata) => {
       const func = (next) => {
         const count = insertIndex * upsertTransactionN + sqldata.length;
-        this.print(`url表已插入: ${count} 条数据`);
+        this.print(`url表已插入: ${count} 条数据`, 'gray');
         insertIndex++;
         const sql = UtilSQL.getBigUpsertSQL(o, sqldata);
         sequelize.query(sql).then(() => next()).catch((e) => {

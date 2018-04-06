@@ -197,7 +197,7 @@ class Tasks extends Event {
       this.extract(n, (urls) => {
         const urlsN = urls.length;
         if (!urlsN) return this.final();
-        this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
+        this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`, 'gray');
         const id_urls = urls.map(url => url.unique_id);
         process.send && process.send({ type: 'extract', payload: id_urls });
         worker.push(urls);
@@ -213,7 +213,7 @@ class Tasks extends Event {
   async restart(end) {
     const isClean = end.isClean || false;
     const isUpdate = end.isUpdate || false;
-    this.print('restart...', 'blue');
+    this.print('begin restart...', 'blue');
     if (isClean) await this.cleanModel();
     await this.updateUrls();
     if (isClean || isUpdate) await this.createUrls();

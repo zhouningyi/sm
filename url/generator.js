@@ -43,7 +43,7 @@ class UrlGen extends Events {
   process(urls) {
     check(urls);
     if (!Array.isArray(urls)) urls = _.values(urls);
-    this.print(`生成${urls.length}条任务(内存), ${getDt(this.t)}`);
+    this.print(`生成${urls.length}条任务(内存), ${getDt(this.t)}`, 'gray');
     this.onReady(urls);
   }
   onReady(urls) {
