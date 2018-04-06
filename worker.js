@@ -146,11 +146,17 @@ class Worker extends Events {
   }
   onDone(e) {
     console.log('done...............');
+    const { config } = this;
     if (e) {
       this.print('出现错误');
       process.exit(); // ////////////////////////////////////////////////////////////注意
+    } else if (config.finalize) {
+      config.finalize(() => {
+        this.onEmpty();
+      });
+    } else {
+      this.onEmpty();
     }
-    this.onEmpty();
   }
   run() {
     this.resume();
