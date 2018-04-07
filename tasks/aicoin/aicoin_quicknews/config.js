@@ -24,7 +24,7 @@ module.exports = {
     const urls = {};
     const { data } = await dblink.query(db_id, 'SELECT MAX(LASTID) FROM public.aicoin_quicknews');
     const maxId = _.get(data, '0.max') || 10000;
-    const pageSize = 50;
+    const pageSize = 10;
     const delta = 400;
     _.range(maxId, maxId + delta, pageSize).reverse().forEach((idx) => {
       const url = `https://www.aicoin.net.cn/api/data/moreFlash?pagesize=${pageSize}&lastid=${idx}`;
@@ -41,7 +41,7 @@ module.exports = {
   // extractN: 5,
   end: {
     type: 'restart',
-    isClean: true,
+    isUpdate: true,
   },
   //
   parallN: 1,

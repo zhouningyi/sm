@@ -84,20 +84,26 @@ class Tasks extends Event {
     if (!config.processing) config.processing = require(urlProcessor);
     config = this.config = Utils.genConfig(config);
   }
-  async init(next) {
+  async init() {
     const { options, config } = this;
-    // const empty = next => next();
+    const isUrlMode = !!config.urls;
     const isClean = options.isNeedCleanModel;
     const isUpdate = isClean || options.isNeedUpdateModel;// 如果清空了 必须update
-    await this.initUrlModel();
-    if (isClean) await this.dropModel();
-    await this.runUrlModel();
-    if (isUpdate) await this.createUrls();
-    await this.updateUrls();
-    if (!options.onlyUrls) await this.createWorkers();
-    await this.urlModel.printCount();
-    this.print('async: urls task finish...', 'gray');
-    if (options.onlyUrls && process.send) process.send({ type: 'urls/finish' });
+    if (isUrlMode) {
+      await this.initUrlModel();
+      if (isClean) await this.dropModel();
+      await this.runUrlModel();
+      if (isUpdate) await this.createUrls();
+      await this.updateUrls();
+      if (!options.onlyUrls) await this.createWorkers();
+      await this.urlModel.printCount();
+      this.print('async: urls task finish...', 'gray');
+      if (options.onlyUrls && process.send) process.send({ type: 'urls/finish' });
+    } else { // ws等情况
+      // this.startWorker
+      await this.createWorkers();
+      await this.startWokerProcess();
+    }
     this.onStart();
   }
   onStart() {
@@ -110,7 +116,7 @@ class Tasks extends Event {
     return d;
   }
   // 建立url的model
-  async initUrlModel(next) {
+  async initUrlModel() {
     const { config } = this;
     const { url_db_id } = this.options;
     let urlLink;
@@ -134,24 +140,22 @@ class Tasks extends Event {
       console.log('i will exit', code, signal, this.name, this.options, this.tasks);
       this.urlModel.close(); // 进程结束前释放连接
     });
-    if (next) next();
   }
   // 执行url
-  runUrlModel(next) {
+  async runUrlModel() {
     return new Promise((resolve, reject) => {
       this.urlModel.on('ready', () => {
-        if (next) next();
         resolve();
       }).run();
     });
   }
 
-  async dropModel(next) { // 删除(drop) 旧UrlDb的内容
-    await this.urlModel.drop(next);
+  async dropModel() { // 删除(drop) 旧UrlDb的内容
+    await this.urlModel.drop();
   }
 
-  async cleanModel(next) { // 清除(clean)  旧UrlDb的内容
-    await this.urlModel.clean(next);
+  async cleanModel() { // 清除(clean)  旧UrlDb的内容
+    await this.urlModel.clean();
   }
   async createUrls() {	// 生成初始化的url
     const { urlModel, urlGen } = this;
@@ -176,33 +180,43 @@ class Tasks extends Event {
   }
 
 	// 生成初始化的工作节点 这个部分需要考虑分布式扩展
-  async createWorkers(next) {
+  async createWorkers() {
     const { config, urlModel } = this;
+    const isUrlMode = !!config.urls;
     const { db_id } = this.options;
     const workers = this.workers = [];
-    core.workers.forEach((cfg) => {
+    const tasks = _.map(core.workers, async (cfg) => {
       const worker = new Worker(cfg, config, { db_id });
-      worker.setUrlModel(urlModel);
+      await worker.init();
+      if (isUrlMode) worker.setUrlModel(urlModel);
       this.initEventsWorker(worker);
       workers.push(worker);
     });
-    if (next) next();
+    await Promise.all(tasks);
+  }
+  async startWokerProcess() {
+    _.forEach(this.workers, (worker) => {
+      worker.startProcess();
+    });
   }
   initEventsWorker(worker) {
-    const n = this.config.extractN;
-    worker.on('empty', () => {
-      // this.print(`尝试提取${n}条爬虫url...`, 'gray');
-      process.send && process.send({ type: 'preextract' });
-      const t = getT();
-      this.extract(n, (urls) => {
-        const urlsN = urls.length;
-        if (!urlsN) return this.final();
-        this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`, 'gray');
-        const id_urls = urls.map(url => url.unique_id);
-        process.send && process.send({ type: 'extract', payload: id_urls });
-        worker.push(urls);
+    const { extractN, urls } = this.config;
+    const isUrlMode = !!urls;
+    if (isUrlMode) {
+      worker.on('empty', () => {
+        // this.print(`尝试提取${n}条爬虫url...`, 'gray');
+        process.send && process.send({ type: 'preextract' });
+        const t = getT();
+        this.extract(extractN, (urls) => {
+          const urlsN = urls.length;
+          if (!urlsN) return this.final();
+          this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`, 'gray');
+          const id_urls = urls.map(url => url.unique_id);
+          process.send && process.send({ type: 'extract', payload: id_urls });
+          worker.push(urls);
+        });
       });
-    });
+    }
   }
   extract(n, cb) {
     this.urlModel.extract(n, urls => cb(urls[0]));

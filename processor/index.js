@@ -18,36 +18,36 @@ class Processor extends Event {
   reset() {
     this.index = 0;
   }
-  process(record) {
+  process(record, isProcess = true) {
     const { config } = this;
     const { parseType } = config;
     let body;
-    return new Promise(async (resolve, reject) => {
-      const { res } = record;
-      if (res) {
-        body = record.body = res.body;
-      }
 
+    return new Promise(async (resolve, reject) => {
       // 做一次变换 坏处是耗费了一些内存
       const failF = e => reject(e || 'processor error');
       const successF = () => resolve();
+      const { res } = record;
+      if (isProcess) {
+        if (res) body = record.body = res.body;
 
-      if (parseType === 'dom') {
-        record.$ = cheerio.load(body);
-      } else if (parseType === 'json' && body) {
-        if (typeof (body) === 'string') {
-          try {
-            record.json = JSON.parse(body);
-          } catch (e) {
-            reject(record, 'json parse error');
+        if (parseType === 'dom') {
+          record.$ = cheerio.load(body);
+        } else if (parseType === 'json' && body) {
+          if (typeof (body) === 'string') {
+            try {
+              record.json = JSON.parse(body);
+            } catch (e) {
+              reject(record, 'json parse error');
+            }
+          } else {
+            record.json = body;
           }
-        } else {
-          record.json = body;
+        } else if (parseType === 'file') {
+          record.file = body;
+        } else if (parseType === 'image') {
+          record.file = body;
         }
-      } else if (parseType === 'file') {
-        record.file = body;
-      } else if (parseType === 'image') {
-        record.file = body;
       }
       //
       const processor = config.processing || config.processor;

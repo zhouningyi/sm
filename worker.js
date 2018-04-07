@@ -28,16 +28,18 @@ class Worker extends Events {
     this.config = config;
     this.id = Utils.getRandId();
 		// Utils.print(`初始化workder ${this.id}`);
-    this.init();
+    // this.init();
   }
-  init() {
+  async init() {
+    const { urls } = this.config;
+    const isUrlMode = !!urls;
     this.reset();
-    Promise.all([this.loadModelConfigs(), this.initOutputModels()])
-    .then(() => {
-      this.initQuery(this.run.bind(this));
-      this.initProcessor();
-      this.noExit();
-    });
+    await Promise.all([this.loadModelConfigs(), this.initOutputModels()]);
+    if (isUrlMode) {
+      this.initQuery();// this.run.bind(this)
+    }
+    this.initProcessor();
+    this.noExit();
   }
   reset() {
     this.isloop = true;
@@ -107,7 +109,7 @@ class Worker extends Events {
     this.models = result;
     return result;
   }
-  createRecord(obj) {	// 建立一个record对象 在各个组之间传递
+  createRecord(obj = {}) {	// 建立一个record对象 在各个组之间传递
     const { config } = this;
     return {
       name: config.name,
@@ -123,7 +125,7 @@ class Worker extends Events {
       json: null, // ajax请求返回
     };
   }
-  noExit() {	// 不让程序在暂停的时候自动退出
+  noExit() { // 不让程序在暂停的时候自动退出
     setTimeout(() => {}, 10000000);
   }
 		// 请求发生器
@@ -157,10 +159,11 @@ class Worker extends Events {
       this.onEmpty();
     }
   }
-  run() {
-    this.resume();
-    setTimeout(this.onEmpty.bind(this));
-  }
+  // run() {
+  //   console.log('rum.........');
+  //   this.resume();
+  //   setTimeout(this.onEmpty.bind(this));
+  // }
 	// 有新的url
   push(records) {
     this.print('开始执行任务', 'gray');
@@ -211,15 +214,21 @@ class Worker extends Events {
       });
     });
   }
+  startProcess() {
+    const record = this.createRecord();
+    this.processor.process(record, false);
+  }
 		// 执行成功并写入url数据库
   success(record) {
-    this.urlModel.success(record);
+    const { urlModel } = this;
+    if (urlModel) urlModel.success(record);
   }
 		// 执行失败并写入url数据库
   fail(record, e) {
     Utils.warn(`${record.url} 失败... 原因${e}`);
     record.error = e;
-    this.urlModel.fail(record);
+    const { urlModel } = this;
+    if (urlModel) urlModel.fail(record);
   }
   onEmpty() {
     setTimeout((() => this.emit('empty')));

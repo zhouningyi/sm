@@ -14,8 +14,8 @@ const checkConfig = (cfg) => {
   // 错误
   const name = cfg.name;
   const warnHead = `config_${name}: `;
-  const urls = cfg.urls || cfg.url;
-  if (!urls) warnExit(`${warnHead}必须要有urls函数，从回调函数返回所有url`);
+  // const urls = cfg.urls || cfg.url;
+  // if (!urls) warn(`${warnHead}一般要有urls函数，websocket等需要在processer里完成逻辑`);
   const qtypes = { get: 1, post: 1 };
   if (!(cfg.queryType.toLowerCase() in qtypes)) warnExit('queryType 只能为get 或post');
   if (!cfg.version) warnExit('请设置config.version');
