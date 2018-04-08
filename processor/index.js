@@ -30,7 +30,7 @@ class Processor extends Event {
       const { res } = record;
       if (isProcess) {
         if (res) body = record.body = res.body;
-
+        if (!body) return failF('body返回为空..');
         if (parseType === 'dom') {
           record.$ = cheerio.load(body);
         } else if (parseType === 'json' && body) {

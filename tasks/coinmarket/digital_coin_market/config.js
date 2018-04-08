@@ -16,21 +16,26 @@ module.exports = {
     value: 10,
     type: 'interval'
   },
-  urls: (cb, db_id) => {
-    dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['market_url'] }).then((d) => {
-      d = d.data;
-      const urls = {};
-      _.forEach(d, (line) => {
-        const url = line.market_url;
-        urls[url] = { url };
-      });
-      cb(urls);
+  urls: async (cb, db_id) => {
+    //    const ds = await dblink.query(db_id, 'select market_url from public.digital_coin');
+    const ds = await dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['market_url'] });
+    const d = ds.data;
+    const urls = {};
+    _.forEach(d, (line) => {
+      const url = line.market_url;
+      urls[url] = { url };
     });
+    cb(urls);
   },
   parseType: 'dom',
   periodInterval: 1000,
-  tables: ['digital_coin_market'],
+  models: ['pair_price_coinmarketcap', 'pair_price_history_coinmarketcap'],
   printInterval: 30,
+  end: {
+    type: 'restart',
+    isUpdate: true
+  },
   //
-  parallN: 1,
+  parallN: 5,
 };
+

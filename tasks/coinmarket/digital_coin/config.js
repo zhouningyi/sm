@@ -14,11 +14,12 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    const url = 'https://coinmarketcap.com/coins/views/all/';
-    const result = {};
-    result[url] = { url };
-    result[`${url}_`] = { url };
-    cb(result);
+    const urls = {};
+    const urlList = ['https://coinmarketcap.com/coins/views/all/', 'https://coinmarketcap.com/tokens/views/all/'];
+    _.forEach(urlList, (url) => {
+      urls[url] = { url };
+    });
+    cb(urls);
   },
   parseType: 'dom',
   periodInterval: 1000,

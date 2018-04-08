@@ -30,5 +30,5 @@ module.exports = {
   printInterval: 30,
   proxy: 'shadow',
   //
-  parallN: 1,
+  parallN: 5,
 };

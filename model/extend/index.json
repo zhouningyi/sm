@@ -14,4 +14,18 @@
 }, {
   "source": "ticks_history",
   "name": "ticks_history_binance"
+}, {
+  "source": "pair_price",
+  "name": "pair_price_history"
+}, {
+  "source": "pair_price",
+  "name": "pair_price_coinmarketcap",
+  "columns": {
+    "left_coin": ["STRING", 12],
+    "right_coin": ["STRING", 12],
+    "market_url": ["STRING", 120]
+  }
+}, {
+  "source": "pair_price_history",
+  "name": "pair_price_history_coinmarketcap"
 }]

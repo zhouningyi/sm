@@ -1,0 +1,24 @@
+	{
+		"name": "pair_price",
+		"desc": "pair_price",
+    "columns": {
+      "unique_id": {
+        "type": ["STRING", 60],
+        "unique": true,
+        "index": true
+      },
+      "pair": ["STRING", 20],
+      "volume_24_usd": "FLOAT",
+      "time": "DATE",
+      "price_usd": "FLOAT",
+      "volume_exchange_percent": {
+        "type": "FLOAT",
+        "comment": "市场占比"
+      },
+      "volume_pair_percent": {
+        "type": "FLOAT",
+        "comment": "市场占比"
+      },
+      "exchange": ["STRING", 40]
+    }
+	}

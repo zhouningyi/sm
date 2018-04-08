@@ -18,7 +18,6 @@ module.exports = {
     const token = '1N52wHoVR79PMDishab2XmRHsbekCdGquK';
     const result = {};
     result[url] = { url };
-    result[`${url}_`] = { url };
     cb(result);
   },
   parseType: 'dom',
