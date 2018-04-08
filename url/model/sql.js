@@ -1,3 +1,4 @@
+
 /**
 * @Author: disoul
 * @Date:   2017-04-27T22:39:33+08:00
@@ -6,6 +7,7 @@
 */
 
 const Utils = require('./../../lib/utils/database');
+const escape = require('pg-escape');
 
 const defaultOptions = {
   limit: 200, // 选url一次的条数
@@ -170,18 +172,19 @@ const getCleanSQL = (options) => {
 };
 
 const getUpsertSQL = (o, d) => {
+  const dqs = escape.dollarQuotedString;
   const { unique_id, url } = d;
-  const query = JSON.stringify(d.query || {});
-  const params = JSON.stringify(d.params || {});
-  const index = d.index || 0;
-  const createdAt = 'now()',
-    updatedAt = 'now()',
-    retry = '0',
-    lock = 'false',
-    isable = 'true';
+  const query = dqs(JSON.stringify(d.query || {}));
+  const params = dqs(JSON.stringify(d.params || {}));
+  // const index = d.index || 0;
+  const createdAt = 'now()';
+  const updatedAt = 'now()';
+  const retry = '0';
+  const lock = 'false';
+  const isable = 'true';
 
   return `INSERT INTO ${o.schema}.${o.tbName}(  unique_id,    url,         params,          "createdAt",   retry,    lock,    isable, "query",  "updatedAt")
-                                      VALUES ('${unique_id}', '${url}', '${params}'::json, ${createdAt}, ${retry}, ${lock}, ${isable},  '${query}'::json, ${updatedAt})
+                                      VALUES ('${unique_id}', ${dqs(url)}, ${params}::json, ${createdAt}, ${retry}, ${lock}, ${isable},  ${query}::json, ${updatedAt})
           ON CONFLICT (unique_id) DO UPDATE SET url = EXCLUDED.url, params = EXCLUDED.params, "updatedAt" = EXCLUDED."updatedAt";
           `;
 };
