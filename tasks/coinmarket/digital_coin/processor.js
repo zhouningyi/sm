@@ -17,11 +17,9 @@ function getNumber(str) {
 }
 
 module.exports = (record, success, fail) => {
-  const { $ } = record;
-  const { tables } = record;
-  const dom = $('.table-responsive');
+  const { $, tables, params } = record;
   const results = [];
-  dom.find('tbody').find('tr').each((i, d) => {
+  $('.table-responsive').find('tbody').find('tr').each((i, d) => {
     const tds = $(d).find('td');
     // 1
     const node1 = $(tds[1]);
@@ -29,6 +27,13 @@ module.exports = (record, success, fail) => {
     const coin_name = nameNode.text();
     const coin_full_name = node1.find('.currency-name-container').text();
     const trend_url = getUrl(nameNode.find('a').attr('href'));
+    //
+    let base_coin = '';
+    if (params.type === 'token') {
+      const node2 = $(tds[2]);
+      base_coin = node2.text();
+    }
+
     // 3
     const capText = $(tds[3]).text();
     const market_cap = getNumber(capText);
@@ -38,11 +43,11 @@ module.exports = (record, success, fail) => {
     const price = getNumber(priceText);
     const market_url = getUrl(priceNode.find('a').attr('href'));
     // 5
-    const circulatingNode = $(tds[6]);
+    const circulatingNode = $(tds[5]);
     let circulating_supply = circulatingNode.find('a').text();
     circulating_supply = getNumber(circulating_supply);
     // 7
-    const volumeNode = $(tds[7]);
+    const volumeNode = $(tds[6]);
     const volumeText = volumeNode.text();
     const volumn_24h = getNumber(volumeText);
     let data = {
@@ -54,6 +59,7 @@ module.exports = (record, success, fail) => {
       price,
       circulating_supply,
       volumn_24h,
+      base_coin
     };
     data = Utils.cleanObjectNull(data);
     results.push(data);

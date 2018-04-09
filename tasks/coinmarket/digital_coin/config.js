@@ -15,17 +15,17 @@ module.exports = {
   },
   urls: (cb, db_id) => {
     const urls = {};
-    const urlList = ['https://coinmarketcap.com/coins/views/all/', 'https://coinmarketcap.com/tokens/views/all/'];
-    _.forEach(urlList, (url) => {
-      urls[url] = { url };
-    });
+    const url = 'https://coinmarketcap.com/coins/views/all/';
+    const urlToken = 'https://coinmarketcap.com/tokens/views/all/';
+    urls[urlToken] = { url: urlToken, params: { type: 'token' } };
+    urls[url] = { url, params: { type: '' } };
     cb(urls);
   },
   parseType: 'dom',
   periodInterval: 1000,
   tables: ['digital_coin'],
   printInterval: 30,
-  proxy: 'shadow',
+  // proxy: 'shadow',
   //
   parallN: 1,
 };

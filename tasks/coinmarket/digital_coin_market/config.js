@@ -18,13 +18,19 @@ module.exports = {
   },
   urls: async (cb, db_id) => {
     //    const ds = await dblink.query(db_id, 'select market_url from public.digital_coin');
-    const ds = await dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['market_url'] });
+    const ds = await dblink.findAll(db_id, 'public', 'digital_coin', {
+      attributes: ['market_url'],
+      where: {
+        coin_name: 'BTC'
+      }
+    });
     const d = ds.data;
     const urls = {};
     _.forEach(d, (line) => {
       const url = line.market_url;
       urls[url] = { url };
     });
+    console.log(urls, 'urls');
     cb(urls);
   },
   parseType: 'dom',

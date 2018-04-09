@@ -27,7 +27,7 @@ function getPercent(str) {
 }
 
 module.exports = async (record, success, fail) => {
-  const { $ } = record;
+  const { $, url } = record;
   const { models } = record;
   const dom = $('.table-responsive');
   const ds = [];
@@ -47,6 +47,7 @@ module.exports = async (record, success, fail) => {
     // 4
     const priceText = $(tds[4]).find('span').text();
     const price_usd = getNumber(priceText);
+    console.log(url, price_usd, priceText, 'price_usd....');
     // 5
     const percent = $(tds[5]).text();
     const volume_pair_percent = getPercent(percent);

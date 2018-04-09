@@ -36,11 +36,11 @@ module.exports = (record, success, fail) => {
     const priceText = priceNode.text();
     const price = getNumber(priceText);
     // 5
-    const circulatingNode = $(tds[6]);
+    const circulatingNode = $(tds[5]);
     let circulating_supply = circulatingNode.find('a').text();
     circulating_supply = getNumber(circulating_supply);
     // 7
-    const volumeNode = $(tds[7]);
+    const volumeNode = $(tds[6]);
     const volumeText = volumeNode.text();
     const volumn_24h = getNumber(volumeText);
 

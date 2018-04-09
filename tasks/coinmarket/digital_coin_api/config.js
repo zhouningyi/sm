@@ -20,7 +20,14 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['trend_url'] }).then((d) => {
+    dblink.findAll(db_id, 'public', 'digital_coin', {
+      attributes: ['trend_url'],
+      where: {
+        // circle_percent: {
+        //   $gte: 0.9
+        // }
+      }
+    }).then((d) => {
       d = d.data;
       const urls = {};
       _.forEach(d, (line) => {

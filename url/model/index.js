@@ -87,6 +87,8 @@ class UrlModel extends Event {
   }
 
   async upsert(urls, cb) {
+    if (!urls) return console.log('urls不能为空');
+    if (!Array.isArray(urls)) urls = [urls];
     const { model, config, options, sequelize } = this;
     const getId = config.id;
     const tasks = [];
@@ -101,7 +103,7 @@ class UrlModel extends Event {
     let sqldata;
     let unique_id;
     let dataline;
-    urls.forEach((d, i) => {
+    _.forEach(urls, (d, i) => {
       idx = Math.floor(i / upsertTransactionN);
       d = urls[i];
       const { url, params, query } = d;
@@ -110,7 +112,6 @@ class UrlModel extends Event {
       dataline = Utils.cleanObjectNull({ url, params, unique_id, query });
       sqldata.push(dataline);
     });
-
 
     let insertIndex = 0;
     _.forEach(sqldataList, (sqldata) => {
