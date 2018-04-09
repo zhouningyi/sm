@@ -13,18 +13,34 @@ module.exports = {
         value: 10,
         type: 'interval'
     },
-    urls: (cb, db_id) => {
-        const url = 'https://localbitcoins.com/buy-bitcoins-online/cn/china/';
-        const result = {};
-        result[url] = { url };
-        result[`${url}_`] = { url };
+    urls: async (cb, db_id) => {
+        // const url = 'https://localbitcoins.com/api/currencies/';
+
+        // const maxId = _.get(data, '0.max') || 10000;
+        // const pageSize = 10;
+        // const delta = 400;
+        // _.range(pages).reverse().forEach((idx) => {
+        //     const url = `https://localbitcoins.com/sell-bitcoins-online/.json?page=${page}`;
+        //     urls[url] = { url, params: { lastid: idx } };
+        // });
+        // cb(urls);
+        var rs = []
+        var result = {}
+        for (var i = 0; i < 10; i++) {
+            rs.push(i+1);
+        }
+
+        // cb(result);
+
+        _.forEach(rs, (r) => {
+            result[`https://localbitcoins.com/sell-bitcoins-online/.json?page=${r}`] = { url: `https://localbitcoins.com/sell-bitcoins-online/.json?page=${r}` }
+        });
         cb(result);
     },
-    parseType: 'dom',
+    parseType: 'json',
     periodInterval: 10,
-    tables: ['localbitcoins'],
+    models: ['localbitcoins'],
     printInterval: 30,
-    proxy: 'shadow',
     //
-    parallN: 1,
+    parallN: 11,
 };

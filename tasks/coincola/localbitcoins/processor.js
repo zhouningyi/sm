@@ -21,12 +21,16 @@ function getNumber(str) {
     return parseFloat(price, 10);
 }
 
-module.exports = (record, success, fail) => {
-    const { $ } = record;
+module.exports = async (record, success, fail) => {
+    const { json } = record;
     const { tables } = record;
-    const dom = $('table');
+    const { localbitcoins } = record.models
+    console.log(json.data)
     const results = [];
-    console.log(dom)
+    if (json.data.ad_list.length > 0) {
+        const data = json.data.ad_list.map((t, i) => Object.assign({}, t.data, { profile: JSON.stringify(t.data.profile), unique_id: `${t.data.ad_id}-${i}-${new Date().getTime()}` }))
+        await localbitcoins.bulkCreate(data).then(t => t)
+    }
     //报错，不知道为啥。
     // dom.find('bitcoinlist')[0]
     // dom.find('tbody').find('tr').each((i, d) => {
