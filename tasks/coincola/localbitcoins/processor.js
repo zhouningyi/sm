@@ -36,7 +36,7 @@ module.exports = async (record, success, fail) => {
     const url = json.pagination.next;
 
     await record.urlModel.upsert([{ url }]);
-    console.log(data, 'success...');
+    console.log(url, 'url...');
     await Utils.batchUpsert(localbitcoins, data);
     // await localbitcoins.bulkCreate(data).then(t => t);
   }
