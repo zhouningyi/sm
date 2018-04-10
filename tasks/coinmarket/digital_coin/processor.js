@@ -29,9 +29,11 @@ module.exports = (record, success, fail) => {
     const trend_url = getUrl(nameNode.find('a').attr('href'));
     //
     let base_coin = '';
+    let is_token = false;
     if (params.type === 'token') {
       const node2 = $(tds[2]);
       base_coin = node2.text();
+      is_token = true;
     }
 
     // 3
@@ -59,7 +61,8 @@ module.exports = (record, success, fail) => {
       price,
       circulating_supply,
       volumn_24h,
-      base_coin
+      base_coin,
+      is_token
     };
     data = Utils.cleanObjectNull(data);
     results.push(data);
