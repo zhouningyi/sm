@@ -1,0 +1,66 @@
+{
+        "name": "coincola_platform",
+        "desc": "coincola_platform场外交易",
+        "columns": {
+            "unique_id": {
+                "type": [
+                    "STRING",
+                    200
+                ],
+                "allowNull": false,
+                "unique": true,
+                "comment": "唯一id"
+            },
+            "platform": {
+                "type": [
+                    "STRING",
+                    200
+                ],
+                "comment": "平台"
+            },
+            "trade_id": {
+                "type": "INTEGER",
+                "comment": "guadan id"
+            },
+            "max_amount": {
+                "type": "FLOAT",
+                "comment": "卖家名"
+            },
+            "min_amount": {
+                "type": "FLOAT",
+                "comment": "卖家名"
+            },
+            "country_code": {
+                "type": [
+                    "STRING",
+                    20
+                ],
+                "comment": "coutry"
+            },
+            "currency": {
+                "type": [
+                    "STRING",
+                    50
+                ],
+                "comment": "支付方式"
+            },
+            "crypto_currency": {
+                "type": [
+                    "STRING",
+                    50
+                ],
+                "comment": "币"
+            },
+            "payment_provider": {
+                "type": [
+                    "STRING",
+                    20
+                ],
+                "comment": "支付方式"
+            },
+            "price": {
+                "type": "INTEGER",
+                "comment": "价格"
+            }
+        }
+    }
