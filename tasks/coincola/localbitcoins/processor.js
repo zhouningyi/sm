@@ -34,9 +34,9 @@ module.exports = async (record, success, fail) => {
         created_time: t.data.created_at,
       }));
     const url = json.pagination.next;
-
-    await record.urlModel.upsert([{ url }]);
-    console.log(url, 'url...');
+    if (json.pagination.next) {
+      await record.urlModel.upsert([{ url }]);
+    }
     await Utils.batchUpsert(localbitcoins, data);
     // await localbitcoins.bulkCreate(data).then(t => t);
   }
