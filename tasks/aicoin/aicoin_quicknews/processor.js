@@ -7,7 +7,7 @@ const _ = require('lodash');
 const md5 = require('md5');
 
 module.exports = (record, success, fail) => {
-  const { tables, json, body } = record;
+  const { tables, json, body, params } = record;
   const ds = _.get(json, 'data.content');
   const results = _.map(ds, (d) => {
     let source = Utils.cut(d.title, '【', '】');
@@ -20,6 +20,7 @@ module.exports = (record, success, fail) => {
       time: new Date(d.time * 1000),
       type: d.type,
       source,
+      lastid: d.id
     };
   });
   //

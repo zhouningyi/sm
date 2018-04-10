@@ -8,6 +8,7 @@
 const cheerio = require('cheerio');
 const Event = require('events').EventEmitter;
 
+
 // 处理返回的数据
 class Processor extends Event {
   constructor(config, options) {
@@ -17,37 +18,40 @@ class Processor extends Event {
   reset() {
     this.index = 0;
   }
-  process(record) {
-    return new Promise((resolve, reject) => {
-      const res = record.res;
-      const config = this.config;
-      const parseType = config.parseType;
-      const body = record.body = res.body;
+  process(record, isProcess = true) {
+    const { config } = this;
+    const { parseType } = config;
+    let body;
 
+    return new Promise(async (resolve, reject) => {
       // 做一次变换 坏处是耗费了一些内存
       const failF = e => reject(e || 'processor error');
       const successF = () => resolve();
-
-      if (parseType === 'dom') {
-        record.$ = cheerio.load(body);
-      } else if (parseType === 'json') {
-        if (typeof (body) === 'string') {
-          try {
-            record.json = JSON.parse(body);
-          } catch (e) {
-            reject(record, 'json parse error');
+      const { res } = record;
+      if (isProcess) {
+        if (res) body = record.body = res.body;
+        if (!body) return failF('body返回为空..');
+        if (parseType === 'dom') {
+          record.$ = cheerio.load(body);
+        } else if (parseType === 'json' && body) {
+          if (typeof (body) === 'string') {
+            try {
+              record.json = JSON.parse(body);
+            } catch (e) {
+              reject(record, 'json parse error');
+            }
+          } else {
+            record.json = body;
           }
-        } else {
-          record.json = body;
+        } else if (parseType === 'file') {
+          record.file = body;
+        } else if (parseType === 'image') {
+          record.file = body;
         }
-      } else if (parseType === 'file') {
-        record.file = body;
-      } else if (parseType === 'image') {
-        record.file = body;
       }
       //
       const processor = config.processing || config.processor;
-      processor(record, successF, failF);
+      await processor(record, successF, failF);
       this.index++;
     });
   }

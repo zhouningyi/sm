@@ -6,28 +6,31 @@ const _ = require('lodash');
 
 
 function getUrl(relPath) {
-    return `https://coinmarketcap.com${relPath}`;
+  return `https://coinmarketcap.com${relPath}`;
 }
 
 function getUserId(str) {
-    if (!str) return null;
-    return str.replace(/\/user\//, '');
+  if (!str) return null;
+  return str.replace(/\/user\//, '');
 }
 
 function getNumber(str) {
-    if (!str) return null;
-    let price = str.replace(/,/g, '');
-    price = price.replace(/\$/g, '');
-    return parseFloat(price, 10);
+  if (!str) return null;
+  let price = str.replace(/,/g, '');
+  price = price.replace(/\$/g, '');
+  return parseFloat(price, 10);
 }
 
-module.exports = (record, success, fail) => {
-    const { $ } = record;
-    const { tables } = record;
-    const dom = $('table');
-    const results = [];
-    console.log(dom)
-    //报错，不知道为啥。
+module.exports = async (record, success, fail) => {
+  const { json } = record;
+  const { tables } = record;
+  const { localbitcoins } = record.models;
+  if (json.data.ad_list.length > 0) {
+    const data = json.data.ad_list.map((t, i) => Object.assign({}, t.data, { profile: JSON.stringify(t.data.profile), unique_id: `${t.data.ad_id}-${i}-${new Date().getTime()}` }));
+    record.urlModel.upsert({ url: json.pagination.next, params: {}, query: {} });
+    await localbitcoins.bulkCreate(data).then(t => t);
+  }
+    // 报错，不知道为啥。
     // dom.find('bitcoinlist')[0]
     // dom.find('tbody').find('tr').each((i, d) => {
     //     const tds = $(d).find('td');
@@ -56,7 +59,7 @@ module.exports = (record, success, fail) => {
     //     const node2 = $(tds[2])
     //     const pay_type = node2.text();
 
-    //     //3 
+    //     //3
     //     const node3 = $(tds[3])
     //     const limits = node3.text();
 

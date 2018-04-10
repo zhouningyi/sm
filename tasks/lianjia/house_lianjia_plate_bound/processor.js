@@ -1,44 +1,59 @@
 /**
  *处理方法
  */
-var Utils = require('./../../../../lib/utils');
-var _ = require('lodash');
-var geojson = require('./../../../../lib/geojson');
-var projection = require('lmap/core/projection');
+const Utils = require('./../../../lib/utils');
+const dUtils = require('./../../../lib/dblink/utils');
+const _ = require('lodash');
+const geojson = require('./../../../lib/geojson');
+const projection = require('./../../../lib/projection');
 
 const parseLatlngs = (str) => {
-  return str.split(';').map(pair => {
+  return str.split(';').map((pair) => {
     pair = pair.split(',').map(d => parseFloat(d, 10));
-    let ll =  projection.BD092GCJ(pair[1], pair[0]);
+    const ll = projection.BD092GCJ(pair[1], pair[0]);
     return [ll.lng, ll.lat];
   });
-}
+};
 
-module.exports = function(record, success, fail) {
-  const model = record.models.house_lianjia_plate;
+module.exports = async function (record, success, fail) {
+  const { house_lianjia_plates } = record.models;
   //
-  let json = record.json;
-  if(!json) return fail('no json...');
-  let ds = json.data;
-  if (!ds || !ds.length) return fail('no length...');
-
-  ds.forEach((d) => {
-    let c = projection.BD092GCJ(parseFloat(d.latitude, 10), parseFloat(d.longitude, 10));
-    c = [c.lng, c.lat];
-
-    let coords = parseLatlngs(d.position_border);
-    let result = {
-      plate_id: '' + d.id,
-      name: d.name,
-      lat: c[1], 
-      lng: c[0], 
-      center: geojson.getGeom(c, 'Point'),
-      polygon: geojson.getGeom([coords], 'Polygon'),
-      avg_price: d.avg_unit_price,
-      selling_count: d.house_count
-    };
-    Utils.upsertPg(model, result);
-  });
-
-  return success(null);
+  const ds = record.script;
+  if (!ds) return fail('no scripts...');
+  for (let i = 0; i < ds.length; i++) {
+    let d = ds[i];
+    d = Utils.cut(d, '({', '})');
+    try {
+      d = JSON.parse(d);
+    } catch (e) {
+      console.log(e);
+    }
+    let idx = 0;
+    const results = _.map(_.get(d, 'data.list'), ((line, plate_id) => {
+      idx++;
+      const { border, count: selling_count, latitude: lat, longitude: lng, name, unit_price: avg_price } = line;
+      let c = projection.BD092GCJ(parseFloat(lat, 10), parseFloat(lng, 10));
+      c = [c.lng, c.lat];
+      const coords = parseLatlngs(border);
+      return {
+        name,
+        plate_id,
+        lat: c[1],
+        lng: c[0],
+        center: geojson.getGeom(c, 'Point'),
+        polygon: geojson.getGeom([coords], 'Polygon'),
+        avg_price,
+        selling_count,
+      };
+    }));
+    console.log(`${idx}条数据....`);
+    //
+    try {
+      await dUtils.batchUpsert(house_lianjia_plates, results);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  success(null);
+  return null;
 };

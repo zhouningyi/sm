@@ -1,3 +1,4 @@
+
 /**
 * @Author: disoul
 * @Date:   2017-04-27T22:39:33+08:00
@@ -6,6 +7,7 @@
 */
 
 const Utils = require('./../../lib/utils/database');
+const escape = require('pg-escape');
 
 const defaultOptions = {
   limit: 200, // 选url一次的条数
@@ -26,9 +28,18 @@ const check = (options) => {
   process.exit();
 };
 
+function _getDayTime(config) {
+  let { time } = config;
+  if (typeof (time) === 'function') time = time();
+  if (typeof (time) === 'number') return time;
+  if (time.type === 'interval') return time.value;
+  return Utils.warnExit(`${config.name}_time 的设置有错误`);
+}
+
 // 重启的时候，让所有需要执行的retry次数设为0, 并把锁解掉
 const getStartSQL = (options) => {
   const o = check(options);
+  const day = _getDayTime(o);
   return `
     BEGIN;
 
@@ -39,7 +50,7 @@ const getStartSQL = (options) => {
     UPDATE ${o.schema}.${o.tbName}
     SET retry = 0
     WHERE retry != 0
-    AND now() - "updatedAt" > INTERVAL '${o.interval} DAY';
+    AND now() - "updatedAt" > INTERVAL '${day} DAY';
 
     COMMIT;
   `;
@@ -56,14 +67,15 @@ const getTaskCountSQL = (options) => {
 
 const _getWhere = (options) => {
   const o = check(options);
+  const day = _getDayTime(o);
   return `
     WHERE isable = true AND placeholder is NULL
     AND (
-      now() - "updatedAt" > INTERVAL '${o.interval} DAY'
+      now() - "updatedAt" > INTERVAL '${day} DAY'
       OR (
        retry < ${o.retryMax}
        AND (
-         now() - last_update > INTERVAL '${o.interval} DAY'
+         now() - last_update > INTERVAL '${day} DAY'
          OR last_update is null
        )
       )
@@ -71,14 +83,14 @@ const _getWhere = (options) => {
   `;
 };
 
-const updateFinishSQL = (options) => {
+function updateFinishSQL(options) {
   const o = check(options);
   const now = Date.now().toString();
   const sql = `
     BEGIN;
 
     UPDATE ${o.schema}.${o.tbName}
-    set "updatedAt" = now() - interval '10 years', last_update = NULL, placeholder = NULL
+    set "updatedAt" = now() - interval '40 years', last_update = NULL, placeholder = NULL
     WHERE unique_id in (
       SELECT unique_id FROM ${o.schema}.${o.tbName} WHERE placeholder = 0 OR ( placeholder is not null AND retry > 0) OR ( placeholder < ${now} - 1200000 ) FOR UPDATE
     );
@@ -86,7 +98,7 @@ const updateFinishSQL = (options) => {
     COMMIT;
   `;
   return sql;
-};
+}
 
 const getUrlSQL = (options) => {
   const o = check(options);
@@ -145,26 +157,34 @@ const getCreateIndexSQL = (options) => {
   `;
 };
 
-const getCleanSQL = (options) => {
+function getDropSQL(options) {
   const o = check(options);
   return `
     DROP TABLE IF EXISTS ${o.schema}.${o.tbName} CASCADE
   `;
+}
+
+const getCleanSQL = (options) => {
+  const o = check(options);
+  return `
+    DELETE FROM ${o.schema}.${o.tbName}
+  `;
 };
 
 const getUpsertSQL = (o, d) => {
+  const dqs = escape.dollarQuotedString;
   const { unique_id, url } = d;
-  const query = JSON.stringify(d.query || {});
-  const params = JSON.stringify(d.params || {});
-  const index = d.index || 0;
-  const createdAt = 'now()',
-    updatedAt = 'now()',
-    retry = '0',
-    lock = 'false',
-    isable = 'true';
+  const query = dqs(JSON.stringify(d.query || {}));
+  const params = dqs(JSON.stringify(d.params || {}));
+  // const index = d.index || 0;
+  const createdAt = 'now()';
+  const updatedAt = 'now()';
+  const retry = '0';
+  const lock = 'false';
+  const isable = 'true';
 
   return `INSERT INTO ${o.schema}.${o.tbName}(  unique_id,    url,         params,          "createdAt",   retry,    lock,    isable, "query",  "updatedAt")
-                                      VALUES ('${unique_id}', '${url}', '${params}'::json, ${createdAt}, ${retry}, ${lock}, ${isable},  '${query}'::json, ${updatedAt})
+                                      VALUES ('${unique_id}', ${dqs(url)}, ${params}::json, ${createdAt}, ${retry}, ${lock}, ${isable},  ${query}::json, ${updatedAt})
           ON CONFLICT (unique_id) DO UPDATE SET url = EXCLUDED.url, params = EXCLUDED.params, "updatedAt" = EXCLUDED."updatedAt";
           `;
 };
@@ -182,6 +202,7 @@ module.exports = {
   getCreateIndexSQL,
   getTaskCountSQL,
   getCleanSQL,
+  getDropSQL,
   getStartSQL,
   getUrlSQL,
   getSuccessSQL,

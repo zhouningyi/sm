@@ -7,19 +7,18 @@ const _ = require('lodash');
 // const dblink = require('./../../../lib/dblink');
 
 module.exports = {
-  name: 'digital_coin',
-  desc: '比特币信息',
+  name: 'blockchain',
+  desc: '比特币转账信息',
   time: {
     value: 10,
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    const urls = {};
-    const urlList = ['https://coinmarketcap.com/coins/views/all/', 'https://coinmarketcap.com/tokens/views/all/'];
-    _.forEach(urlList, (url) => {
-      urls[url] = { url };
-    });
-    cb(urls);
+    const url = 'https://blockchain.info/address/';
+    const token = '1N52wHoVR79PMDishab2XmRHsbekCdGquK';
+    const result = {};
+    result[url] = { url };
+    cb(result);
   },
   parseType: 'dom',
   periodInterval: 1000,

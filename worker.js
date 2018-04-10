@@ -28,16 +28,18 @@ class Worker extends Events {
     this.config = config;
     this.id = Utils.getRandId();
 		// Utils.print(`初始化workder ${this.id}`);
-    this.init();
+    // this.init();
   }
-  init() {
+  async init() {
+    const { urls } = this.config;
+    const isUrlMode = !!urls;
     this.reset();
-    Promise.all([this.loadModelConfigs(), this.initOutputModels()])
-    .then(() => {
-      this.initQuery(this.run.bind(this));
-      this.initProcessor();
-      this.noExit();
-    });
+    await Promise.all([this.loadModelConfigs(), this.initOutputModels()]);
+    if (isUrlMode) {
+      this.initQuery();// this.run.bind(this)
+    }
+    this.initProcessor();
+    this.noExit();
   }
   reset() {
     this.isloop = true;
@@ -107,27 +109,31 @@ class Worker extends Events {
     this.models = result;
     return result;
   }
-  createRecord(obj) {	// 建立一个record对象 在各个组之间传递
-    const config = this.config;
+  createRecord(obj = {}) {	// 建立一个record对象 在各个组之间传递
+    const { config } = this;
     return {
       name: config.name,
+      //
+      urlModel: this.urlModel,
       models: this.models,
       tables: this.models,
       params: obj.params,
       url: obj.url,
       unique_id: obj.unique_id,
-      query: obj.query
+      query: obj.query,
+      page: null, // 页面
+      json: null, // ajax请求返回
     };
   }
-  noExit() {	// 不让程序在暂停的时候自动退出
+  noExit() { // 不让程序在暂停的时候自动退出
     setTimeout(() => {}, 10000000);
   }
 		// 请求发生器
   initQuery(next) {
     const query = this.query = new Query(this.config);
     query
-				.on('ready', this.onReady.bind(this))
-				.on('record', this.onRecord.bind(this));
+    .on('ready', this.onReady.bind(this))
+    .on('record', this.onRecord.bind(this));
   }
 	// 处理器
   initProcessor() {
@@ -140,59 +146,60 @@ class Worker extends Events {
     setTimeout((() => this.emit('ready')));
     this.onEmpty();
   }
-  run() {
-    this.resume();
-    setTimeout(this.onEmpty.bind(this));
+  onDone(e) {
+    const { config } = this;
+    if (e) {
+      this.print('出现错误');
+      process.exit(); // ////////////////////////////////////////////////////////////注意
+    } else if (config.finalize) {
+      config.finalize(() => {
+        this.onEmpty();
+      });
+    } else {
+      this.onEmpty();
+    }
   }
+  // run() {
+  //   console.log('rum.........');
+  //   this.resume();
+  //   setTimeout(this.onEmpty.bind(this));
+  // }
 	// 有新的url
   push(records) {
-    this.print('开始执行任务');
-    this.urlModel.getCount();
+    this.print('开始执行任务', 'gray');
     const jobs = this.jobs = this.createJobs(records);
-    const config = this.config;
-    const self = this;
-    const done = ((e) => {
-      console.log('done...............');
-      if (e) {
-        self.print('出现错误');
-        process.exit(); // ////////////////////////////////////////////////////////////注意
-      }
-      this.onEmpty();
-    });
-
-    async.parallelLimit(jobs, this.config.parallN || this.config.poolSize || 1, done);
+    const { config } = this;
+    const { parallN, poolSize } = config;
+    async.parallelLimit(jobs, parallN || poolSize || 1, this.onDone.bind(this));
   }
   createJobs(urls) {
     const jobs = [];
-    const self = this;
-    _.forEach(urls, (obj, i) => jobs.push(self.createJob(obj, i)));
+    _.forEach(urls, (obj, i) => {
+      jobs.push(this.createJob(obj, i));
+    });
     this.print(`创建job(行任务)${jobs.length}个`);
     return jobs;
   }
   createJob(obj, i) {
     const { config, query } = this;
-    const record = this.createRecord(obj);
-    const { url, params } = record;
-    const interval = this.config.interval || 0;
+    const { interval = 0 } = config;
+    let record = this.createRecord(obj);
     return (next) => {
-				// 暂停爬取的情况
-      if (!this.isloop) {
-        this.curNextFunc = next;
-        return;
-      }
-			// 爬取结束有间隔的情况
-      query.query(record, (e, res) => {
-        if (e) {
-          this.fail(record, 'query response error');
-          return setTimeout(() => next(), interval);
-        }
-        record.res = res;
+      // 暂停爬取的情况
+      if (!this.isloop) return (this.curNextFunc = next);
+      // 爬取结束有间隔的情况
+      query.query(record, (data) => {
+        record = { ...record, ...data };
         this.onRecord(record).then(() => {
           setTimeout(() => next(), interval);
         }).catch((e) => {
-          console.log('processor error');
+          console.log('processor error', e);
           setTimeout(() => next(), interval);
         });
+      }).catch((e) => {
+        console.log('query error', e);
+        this.fail(record, 'query response error');
+        return setTimeout(() => next(), interval);
       });
     };
   }
@@ -207,18 +214,23 @@ class Worker extends Events {
       });
     });
   }
+  startProcess() {
+    const record = this.createRecord();
+    this.processor.process(record, false);
+  }
 		// 执行成功并写入url数据库
   success(record) {
-    this.urlModel.success(record);
+    const { urlModel } = this;
+    if (urlModel) urlModel.success(record);
   }
 		// 执行失败并写入url数据库
   fail(record, e) {
     Utils.warn(`${record.url} 失败... 原因${e}`);
     record.error = e;
-    this.urlModel.fail(record);
+    const { urlModel } = this;
+    if (urlModel) urlModel.fail(record);
   }
   onEmpty() {
-    console.log('onEmpty\n\n\n');
     setTimeout((() => this.emit('empty')));
   }
   pause(text) {
@@ -244,8 +256,8 @@ class Worker extends Events {
       processIndex: stPorcessor.index
     };
   }
-  print(text) {
-    Utils.print(`${this.config.name} || worker || id ${this.id}: ${text}`);
+  print(text, color) {
+    Utils.print(`${this.config.name} || worker || id ${this.id}: ${text}`, color);
   }
 }
 

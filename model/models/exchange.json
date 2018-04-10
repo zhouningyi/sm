@@ -1,0 +1,30 @@
+	{
+		"name": "exchange",
+		"desc": "exchange",
+		"columns": {
+			"name": {
+				"type": ["STRING", 40],
+				"allowNull": false,
+				"unique": true
+			},
+			"volume_24_usd": {
+				"type": ["STRING", 22],
+				"comment": "24小时内交易量"
+			},
+			"pair_count": {
+				"type":  "INTEGER",
+				"comment": "pair数量"
+			},
+			"country": {
+				"type": "STRING",
+				"comment": "国家"
+			},
+			"url": {
+				"type": ["STRING", 100]
+			},
+			"coinmarketcap_url": {
+				"type": ["STRING", 100],
+				"comment": "coinmarketcap上的url"
+			}
+		}
+	}

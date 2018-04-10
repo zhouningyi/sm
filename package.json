@@ -27,6 +27,7 @@
     "cheerio": "^1.0.0-rc.2",
     "d3-scale": "^1.0.7",
     "deepmerge": "^2.0.1",
+    "exchanges": "^1.0.3",
     "lodash": "^4.17.4",
     "lodash.compose": "^2.4.1",
     "md5": "^2.2.1",
@@ -35,12 +36,15 @@
     "pg": "^4.5.5",
     "pg-escape": "^0.2.0",
     "pg_column": "^1.0.10",
+    "puppeteer": "^1.2.0",
     "random-useragent": "^0.3.0",
     "redis": "^2.8.0",
     "request": "^2.69.0",
     "sequelize": "3.24.3",
     "sphericalmercator": "^1.0.5",
     "sqlstring": "^2.3.1",
+    "superagent": "^3.8.2",
+    "superagent-charset": "^1.2.0",
     "zcontrol": "^1.2.31"
   },
   "devDependencies": {

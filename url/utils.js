@@ -18,9 +18,9 @@ function parseSeedArray(param) {
 
 function parseSeedRange(param) {
   const result = [];
-  let min = param.min,
-    max = param.max,
-    step = param.step || 1;
+  const min = param.min;
+  const max = param.max;
+  const step = param.step || 1;
   for (let i = min; i <= max; i += step) {
     result.push(i);
   }
@@ -33,9 +33,9 @@ function parseSeedFunc(param) {
 
 //
 function joinSeeds(values, key, seeds) { // 把参数逐一组成列表
-  let value,
-    result = [],
-    newParam;
+  let value;
+  const result = [];
+  let newParam;
   for (let i = 0; i < values.length; i++) {
     value = values[i];
     if (!seeds.length) {

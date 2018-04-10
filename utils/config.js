@@ -14,8 +14,8 @@ const checkConfig = (cfg) => {
   // 错误
   const name = cfg.name;
   const warnHead = `config_${name}: `;
-  const urls = cfg.urls || cfg.url;
-  if (!urls) warnExit(`${warnHead}必须要有urls函数，从回调函数返回所有url`);
+  // const urls = cfg.urls || cfg.url;
+  // if (!urls) warn(`${warnHead}一般要有urls函数，websocket等需要在processer里完成逻辑`);
   const qtypes = { get: 1, post: 1 };
   if (!(cfg.queryType.toLowerCase() in qtypes)) warnExit('queryType 只能为get 或post');
   if (!cfg.version) warnExit('请设置config.version');
@@ -23,7 +23,7 @@ const checkConfig = (cfg) => {
   if (!(cfg.parseType.toLowerCase() in ptypes)) warnExit('parseType 错误');
   // 警告
   // if (!cfg.models) warn(`${warnHead}建议配置models, models格式为 [model1, model2..]`);
-  if (!cfg.tables) warn(`${warnHead}建议配置tables, tables格式为 [table1, table2..]`);
+  // if (!cfg.tables) warn(`${warnHead}建议配置tables, tables格式为 [table1, table2..]`);
   if (!cfg.time) warn(`${warnHead}最好有time字段(时间或时间段) 单位为天 是任务需要更新的最小单位`);
   if (cfg.params) warn(`${warnHead}config.arams变量已经弃用`);
   if (cfg.timestamp) warn(`${warnHead}config.timestamp已经弃用 请改config.time`);
@@ -122,7 +122,22 @@ const defaultValidation = [{
   uiType: 'inputCode',
   valueType: 'string',
   value: '(cb) => cb(null);'
-}];
+},
+// {
+//   key: 'end',
+//   name: '爬取结束后的行为',
+//   desc: '',
+//   uiType: 'select',
+//   valueType: 'string',
+//   value: null,
+//   validate: {
+//     options: {
+//       重启: 'restart',
+//       关闭: null
+//     }
+//   }
+// }
+];
 
 // 默认的爬虫配置
 const defaultConfig = {
@@ -154,6 +169,7 @@ const defaultConfig = {
   printInterval: 50,
   id: (url, param) => url,
   extractN: 500, // 一次性从数据库读取的数据
+  endType: null
 };
 
 const genConfig = (config) => {

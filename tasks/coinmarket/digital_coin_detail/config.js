@@ -14,7 +14,11 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    dblink.findAll(db_id, 'public', 'digital_coin').then((ds) => {
+    dblink.findAll(db_id, 'public', 'digital_coin', {
+      where: {
+        coin_logo_img_url: null
+      }
+    }).then((ds) => {
       ds = ds.data;
       const result = {};
       _.forEach(ds, (d) => {
@@ -30,5 +34,5 @@ module.exports = {
   printInterval: 30,
   proxy: 'shadow',
   //
-  parallN: 1,
+  parallN: 5,
 };

@@ -1,0 +1,218 @@
+{
+    "name": "localbitcoins",
+    "desc": "localbitcoins场外交易",
+    "columns": {
+        "unique_id": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "allowNull": false,
+            "unique": true,
+            "comment": "唯一id"
+        },
+        "platform": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "平台"
+        },
+
+        "profile": {
+            "type": [
+                "STRING",
+                500
+            ],
+            "comment": "profile"
+        },
+
+        "require_feedback_score": {
+            "type": "FLOAT",
+            "comment": "require_feedback_score"
+        },
+        "hidden_by_opening_hours": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "trade_type": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "trade_type"
+        },
+        "ad_id": {
+            "type": "FLOAT",
+            "comment": "profile"
+        },
+        "temp_price": {
+            "type": [
+                "STRING",
+                2250
+            ],
+            "comment": "temp_price"
+        },
+        "bank_name": {
+            "type": [
+                "STRING",
+                2250
+            ],
+            "comment": "bank_name"
+        },
+        "payment_window_minutes": {
+            "type": "FLOAT",
+            "comment": "profile"
+        },
+        "trusted_required": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "min_amount": {
+            "type": [
+                "STRING",
+                250
+            ],
+            "comment": "min_amount"
+        },
+        "visible": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "require_trusted_by_advertiser": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "temp_price_usd": {
+            "type": [
+                "STRING",
+                25
+            ],
+            "comment": "temp_price_usd"
+        },
+        "lat": {
+            "type": "FLOAT",
+            "comment": "profile"
+        },
+        "is_local_office": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "first_time_limit_btc": {
+            "type": [
+                "STRING",
+                25
+            ],
+            "comment": "temp_price_usd"
+        },
+        "atm_model": {
+            "type": [
+                "STRING",
+                25
+            ],
+            "comment": "temp_price_usd"
+        },
+        "city": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "city"
+        },
+        "location_string": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "location_string"
+        },
+        "countrycode": {
+            "type": [
+                "STRING",
+                250
+            ],
+            "comment": "countrycode"
+        },
+        "currency": {
+            "type": [
+                "STRING",
+                250
+            ],
+            "comment": "currency"
+        },
+        "limit_to_fiat_amounts": {
+            "type": [
+                "STRING",
+                1000
+            ],
+            "comment": "limit_to_fiat_amounts"
+        },
+        "created_time": {
+            "type": "DATE",
+            "comment": "交易发生时间"
+        },
+        "max_amount": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "max_amount"
+        },
+        "lon": {
+            "type": "FLOAT",
+            "comment": "profile"
+        },
+        "is_low_risk": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "sms_verification_required": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "require_trade_volume": {
+            "type": "FLOAT",
+            "comment": "profile"
+        },
+        "online_provider": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "online_provider"
+        },
+        "max_amount_available": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "max_amount_available"
+        },
+        "require_identification": {
+            "type": "BOOLEAN",
+            "allowNull": false,
+            "defaultValue": true
+        },
+        "volume_coefficient_btc": {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "volume_coefficient_btc"
+        },
+        "actions":  {
+            "type": [
+                "STRING",
+                200
+            ],
+            "comment": "actions"
+        }
+    }
+}

@@ -9,7 +9,7 @@ const dblink = require('./../../../lib/dblink');
 function getUrl(url) {
   const arr = url.split('\/');
   const lastName = arr[arr.length - 2];
-  return `https://graphs.coinmarketcap.com/currencies/${lastName}/`;
+  return `https://graphs2.coinmarketcap.com/currencies/${lastName}/`;
 }
 
 module.exports = {
@@ -20,7 +20,9 @@ module.exports = {
     type: 'interval'
   },
   urls: (cb, db_id) => {
-    dblink.findAll(db_id, 'public', 'digital_coin', { attributes: ['trend_url', 'coin_full_name'] }).then((d) => {
+    dblink.findAll(db_id, 'public', 'digital_coin', {
+      attributes: ['trend_url', 'coin_full_name'],
+    }).then((d) => {
       d = d.data;
       const urls = {};
       _.forEach(d, (line) => {
@@ -28,6 +30,8 @@ module.exports = {
         const url = getUrl(trend_url);
         urls[url] = { url, params: { coin_full_name } };
       });
+      // console.log(urls);
+      // process.exit();
       cb(urls);
     });
   },

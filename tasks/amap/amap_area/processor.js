@@ -10,6 +10,7 @@ module.exports = (record, success, fail) => {
   const { tables } = record;
   json = Gaodefy.parseDistrict(json);
   const ds = _.values(json).map(Utils.cleanObjectNull);
+  // _.forEach(ds, d => console.log(d.center));
   Utils.batchUpsert(tables.areas, ds)
   .then(() => success(null))
   .catch((e) => {

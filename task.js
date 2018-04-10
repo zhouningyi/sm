@@ -30,7 +30,6 @@ function checkExist(url) {
   if (!fs.existsSync(pth)) return Utils.warnExit(`${url}不存在`);
 }
 
-
 const findCorrectPath = (filepath, alltasks) => {
   fs.readdirSync(filepath).forEach((name) => {
     const pth = path.join(filepath, name);
@@ -85,25 +84,27 @@ class Tasks extends Event {
     if (!config.processing) config.processing = require(urlProcessor);
     config = this.config = Utils.genConfig(config);
   }
-  init(next) {
+  async init() {
     const { options, config } = this;
-    const empty = next => next();
+    const isUrlMode = !!config.urls;
     const isClean = options.isNeedCleanModel;
     const isUpdate = isClean || options.isNeedUpdateModel;// 如果清空了 必须update
-    const tasks = [
-      cb => this.initUrlModel(cb),
-      isClean ? cb => this.cleanModel(cb) : empty,
-      cb => this.runUrlModel(cb),
-      options.loopUpdate ? cb => this.updateUrls(cb) : empty,
-      isUpdate ? cb => this.createUrls(cb) : empty,
-      !options.onlyUrls ? cb => this.createWorkers(cb) : empty,
-    ];
-    this.tasks = tasks;
+    if (isUrlMode) {
+      await this.initUrlModel();
+      if (isClean) await this.dropModel();
+      await this.runUrlModel();
+      if (isUpdate) await this.createUrls();
+      await this.updateUrls();
+      if (!options.onlyUrls) await this.createWorkers();
+      await this.urlModel.printCount();
+      this.print('async: urls task finish...', 'gray');
+      if (options.onlyUrls && process.send) process.send({ type: 'urls/finish' });
+    } else { // ws等情况
+      // this.startWorker
+      await this.createWorkers();
+      await this.startWokerProcess();
+    }
     this.onStart();
-    async.series(tasks, () => {
-      console.log('async: all task finish', tasks);
-      options.onlyUrls && process.send && process.send({ type: 'urls/finish' });
-    });
   }
   onStart() {
     this.send('start');
@@ -115,89 +116,107 @@ class Tasks extends Event {
     return d;
   }
   // 建立url的model
-  initUrlModel(next) {
+  async initUrlModel() {
     const { config } = this;
     const { url_db_id } = this.options;
-    this.addLink(url_db_id).then(() => {
-      dblink.getLinkById(url_db_id).then((urlLink) => {
-        this.urlModel = new UrlModel(config, {}, urlLink);
-        this.urlGen = new UrlGen(config, {
-          db_id: this.options.db_id
-        }, urlLink);
-
-        process.on('SIGINT', () => {
-          this.urlModel.close(); // 进程结束前释放连接
-          console.log('i receive sigint!');
-          process.exit(1);
-        });
-        process.on('exit', (code, signal) => {
-          console.log('i will exit', code, signal, this.name, this.options, this.tasks);
-          this.urlModel.close(); // 进程结束前释放连接
-        });
-        next();
-      }).catch((e) => {
-        console.log(e);
-        Utils.warnExit('url数据库连接出错');
-      });
-    }).catch((e) => {
-      console.log(e);
+    let urlLink;
+    try {
+      urlLink = await this.addLink(url_db_id);
+    } catch (e) {
+      this.print('initUrlModel', 'red');
       Utils.warnExit('url数据库连接出错');
+    }
+    this.urlModel = new UrlModel(config, {}, urlLink);
+    this.urlGen = new UrlGen(config, {
+      db_id: this.options.db_id
+    }, urlLink);
+
+    process.on('SIGINT', () => {
+      this.urlModel.close(); // 进程结束前释放连接
+      console.log('i receive sigint!');
+      process.exit(1);
     });
-
-
-    // this.urlModel.on('ready', () => {
-    // });
+    process.on('exit', (code, signal) => {
+      console.log('i will exit', code, signal, this.name, this.options, this.tasks);
+      this.urlModel.close(); // 进程结束前释放连接
+    });
   }
   // 执行url
-  runUrlModel(next) {
-    this.urlModel.on('ready', () => next()).run();
+  async runUrlModel() {
+    return new Promise((resolve, reject) => {
+      this.urlModel.on('ready', () => {
+        resolve();
+      }).run();
+    });
   }
 
-  cleanModel(next) { // 清除旧UrlDb的内容
-    this.urlModel.clean(next);
+  async dropModel() { // 删除(drop) 旧UrlDb的内容
+    await this.urlModel.drop();
   }
-  createUrls(next) {	// 生成初始化的url
-    const urlModel = this.urlModel;
-    this.urlGen.on('urls', (obj) => {	// 开始生成一堆url
-      const urls = obj.urls;
-      urlModel.upsert(urls, () => {
-        next();
+
+  async cleanModel() { // 清除(clean)  旧UrlDb的内容
+    await this.urlModel.clean();
+  }
+  async createUrls() {	// 生成初始化的url
+    const { urlModel, urlGen } = this;
+    return new Promise((resolve, reject) => {
+      // 开始生成一堆url
+      urlGen.removeAllListeners('urls');
+      urlGen.on('urls', (obj) => {
+        const { urls } = obj;
+        urlModel.upsert(urls).then(() => {
+          resolve();
+        }).catch((e) => {
+          console.log(e);
+          resolve();
+        });
       });
-    }).run();
+      urlGen.run();
+    });
   }
 
-  updateUrls(next) {
-    console.log('ready to updateurls');
-    this.urlModel.update(next);
+  async updateUrls() {
+    await this.urlModel.update();
   }
 
 	// 生成初始化的工作节点 这个部分需要考虑分布式扩展
-  createWorkers(next) {
+  async createWorkers() {
     const { config, urlModel } = this;
+    const isUrlMode = !!config.urls;
     const { db_id } = this.options;
-    core.workers.forEach((cfg) => {
+    const workers = this.workers = [];
+    const tasks = _.map(core.workers, async (cfg) => {
       const worker = new Worker(cfg, config, { db_id });
-      worker.setUrlModel(urlModel);
+      await worker.init();
+      if (isUrlMode) worker.setUrlModel(urlModel);
       this.initEventsWorker(worker);
+      workers.push(worker);
     });
-    next();
+    await Promise.all(tasks);
+  }
+  async startWokerProcess() {
+    _.forEach(this.workers, (worker) => {
+      worker.startProcess();
+    });
   }
   initEventsWorker(worker) {
-    const n = this.config.extractN;
-    const self = this;
-    worker.on('empty', () => {
-      self.print(`尝试提取${n}条爬虫url...`);
-      process.send && process.send({ type: 'preextract' });
-      const t = getT();
-      self.extract(n, (urls) => {
-        const urlsN = urls.length;
-        if (!urlsN) return self.final();
-        self.print(`已经提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`);
-        const id_urls = urls.map(url => url.unique_id);
-        process.send && process.send({ type: 'extract', payload: id_urls });
-        worker.push(urls);
+    const { extractN, urls } = this.config;
+    const isUrlMode = !!urls;
+    if (isUrlMode) {
+      worker.on('empty', () => {
+        // this.print(`尝试提取${n}条爬虫url...`, 'gray');
+        process.send && process.send({ type: 'preextract' });
+        const t = getT();
+        this.extract(extractN, (urls) => {
+          const urlsN = urls.length;
+          if (!urlsN) return this.final();
+          this.print(`已提取${urlsN}条url, 给worker${worker.id}装载${getDt(t)}`, 'gray');
+          const id_urls = urls.map(url => url.unique_id);
+          process.send && process.send({ type: 'extract', payload: id_urls });
+          worker.push(urls);
+        });
       });
-    });
+    }
   }
   extract(n, cb) {
     this.urlModel.extract(n, urls => cb(urls[0]));
@@ -205,23 +224,43 @@ class Tasks extends Event {
   // 获取当前爬取的状态
   getStatus() {
   }
+  async restart(end) {
+    const isClean = end.isClean || false;
+    const isUpdate = end.isUpdate || false;
+    this.print('begin restart...', 'blue');
+    if (isClean) await this.cleanModel();
+    await this.updateUrls();
+    if (isClean || isUpdate) await this.createUrls();
+    await this.urlModel.printCount();
+    await this.createWorkers();
+    this.onStart();
+  }
   // 完成任务后执行的函数
-  final() {
-  	if (this.next) return this.next();
-  	this.print('已经完成爬取...');
-    this.send('done');
+  exit() {
     setTimeout(() => {
       console.log('process.exit....');
       process.exit();
     }, 100);
+  }
+  final() {
+    const { config } = this;
+    const { end } = config;
+    if (this.next) return this.next();
+    this.print('已经完成爬取...');
+    this.send('done');
+    if (end && (end === 'restart' || end.type === 'restart')) {
+      this.restart(end);
+    } else {
+      this.exit();
+    }
     process.send && process.send({ type: 'final' });
   }
   send(text) {
   	console.log(text);
   }
-  print(text) {
+  print(text, color) {
     const config = this.config;
-    Utils.print(`${config.name} || task || ${text}`);
+    Utils.print(`${config.name} || task || ${text}`, color);
   }
 }
 

@@ -33,3 +33,7 @@ shell参数:
 /utils/config.js
 ```
 
+
+### 流水线
+generator(包括websocket的情况) -> processor
+url => query => process => processor

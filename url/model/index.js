@@ -20,13 +20,6 @@ const UtilSQL = require('./sql');
 const getT = Utils.getTime;
 const getDt = Utils.getDtText;
 
-const getInterval = (config) => {
-  let time = config.time;
-  if (typeof (time) === 'function') time = time();
-  if (typeof (time) === 'number') return time;
-  if (time.type === 'interval') return time.value;
-  return Utils.warnExit(`${config.name}_time 的设置有错误`);
-};
 
 class UrlModel extends Event {
   constructor(config, options, sequelize) {
@@ -48,7 +41,7 @@ class UrlModel extends Event {
 	// 建立schema
   createSchema(next) {
     this.sequelize.query(`CREATE SCHEMA IF NOT EXISTS ${schemaName}`).then(() => {
-      this.print('urls schema 已建立');
+      this.print('urls schema 已建立', 'gray');
       next();
     });
   }
@@ -59,39 +52,41 @@ class UrlModel extends Event {
     const t = getT();
     const model = this.model = this.sequelize.define(modelConf.name, modelConf.columns, {});
     model.schema(schemaName).sync().then(() => {
-      this.print(`url表已建立, ${getDt(t)}`);
+      this.print(`url表已建立, ${getDt(t)}`, 'gray');
       this.prefix(() => next());
     });
   }
-  createIndex(next) {
+  async createIndex(next) {
     const { config } = this;
     const t = getT();
     const sql = UtilSQL.getCreateIndexSQL({
       name: config.name,
       schema: 'urls'
     });
-    this.print('开始检查索引...');
-    this.sequelize.query(sql).then(() => {
-      this.print(`索引已经建立(或已存在), ${getDt(t)}`);
-      next();
-    });
+    this.print('开始检查索引...', 'gray');
+    try {
+      await this.sequelize.query(sql);
+    } catch (e) {
+      this.print('createIndex 出错');
+      console.log(e);
+    }
+    this.print(`索引已经建立(或已存在), ${getDt(t)}`, 'gray');
+    if (next) next();
   }
   prefix(next) {
     const { config } = this;
-    const interval = getInterval(config);
     const sql = UtilSQL.getStartSQL({
-      name: config.name,
-      interval,
-      schema: 'urls'
+      schema: 'urls',
+      ...config
     });
     const t = getT();
     this.sequelize.query(sql).then(() => {
-      this.print(`url表已修复lock等情况, ${getDt(t)}`);
+      this.print(`url表已修复lock等情况, ${getDt(t)}`, 'gray');
       next();
     }).catch(e => console.log(e));
   }
 
-  upsert(urls, cb) {
+  async upsert(urls, cb) {
     const { model, config, options, sequelize } = this;
     const getId = config.id;
     const tasks = [];
@@ -116,53 +111,86 @@ class UrlModel extends Event {
       sqldata.push(dataline);
     });
 
+
     let insertIndex = 0;
-    sqldataList.forEach((sqldata) => {
+    _.forEach(sqldataList, (sqldata) => {
       const func = (next) => {
+        const count = insertIndex * upsertTransactionN + sqldata.length;
+        this.print(`url表已插入: ${count} 条数据`, 'gray');
         insertIndex++;
-        this.print(`url表已插入: ${insertIndex * upsertTransactionN} 条数据`);
         const sql = UtilSQL.getBigUpsertSQL(o, sqldata);
-        sequelize.query(sql).then(e => next());
+        sequelize.query(sql).then(() => next()).catch((e) => {
+          console.log(e);
+          this.print('url 表插入错误...');
+        });
       };
       tasks.push(func);
     });
     if (!tasks.length) return Utils.warn(`${config.name}任务 generate后并没有生成URL`);
-		//
-	  const upsertParallelLimit = this.options.upsertParallelLimit;
+    //
+	  const { upsertParallelLimit } = this.options;
     const t = getT();
-	  async.parallelLimit(tasks, upsertParallelLimit, () => {
-	  	Utils.print(`${config.name} || url_model || 的url更新完毕, ${getDt(t)}`);
-	  	this.createIndex(cb);
-	  });
+    return new Promise((resolve, reject) => {
+      async.parallelLimit(tasks, upsertParallelLimit, () => {
+        Utils.print(`${config.name} || url_model ||  url表已插入完毕, ${getDt(t)}`, 'gray');
+        this.createIndex().then(() => {
+          if (cb) cb();
+          resolve();
+        }).catch(() => {
+          if (cb) cb();
+          resolve();
+        });
+      });
+    });
   }
 
   // 找到n个可爬取的url
   extract(n, cb) {
     const { config } = this;
-    const interval = getInterval(config);
     n = n || config.extractN;
     const sql = UtilSQL.getUrlSQL({
       name: config.name,
       limit: n,
-      interval,
-      schema: 'urls'
+      schema: 'urls',
+      ...config
     });
     this.sequelize.query(sql).then(urls => cb(urls));
   }
-  update(cb) {
+  async update() {
     const sql = UtilSQL.updateFinishSQL(this.config);
-    this.sequelize.query(sql).then(() => {
-      cb();
-    });
+    let ds;
+    try {
+      ds = await this.sequelize.query(sql);
+    } catch (e) {
+      this.print('update 出错...');
+      console.log(e);
+    }
+    return ds;
+  }
+  async drop(next) {
+    this.print('开始删除(drop) url存储...', 'gray');
+    const sql = UtilSQL.getDropSQL({ name: this.config.name });
+    try {
+      await this.sequelize.query(sql);
+    } catch (e) {
+      this.print('drop 出错...', 'gray');
+      console.log(e);
+    }
+    this.print('已经删除(drop) url数据库', 'gray');
+    if (next) next();
   }
   // 清空
-  clean(next) {
-    this.print('开始清空url存储...');
+  async clean(next) {
+    this.print('开始清空(delete) url存储...', 'gray');
     const sql = UtilSQL.getCleanSQL({ name: this.config.name });
-    this.sequelize.query(sql).then(() => {
-      this.print('已经清空url数据库');
-      next();
-    });
+    try {
+      await this.sequelize.query(sql);
+    } catch (e) {
+      this.print('clean 出错...');
+      console.log(e);
+    }
+    this.print('已经空(delete) url数据库', 'gray');
+    if (next) next();
   }
   fail(obj, cb) {
     const { config } = this;
@@ -175,22 +203,23 @@ class UrlModel extends Event {
     this.sequelize.query(sql).then(ds => (cb && cb(ds)));
   }
   success(obj, cb) {
-  	const config = this.config;
-  	const sql = UtilSQL.getSuccessSQL({
-  		name: config.name,
-  		unique_id: obj.unique_id,
-  	});
-  	this.sequelize.query(sql).then(ds => (cb && cb(ds)));
-  }
-  getCount(cb) { // 获取任务总量
-    const sql = UtilSQL.getTaskCountSQL(this.config);
-    this.sequelize.query(sql).then((ds) => {
-      const count = ds[0][0].count;
-      this.print(`本次实际任务总量${count}次`);
+    const { config, sequelize } = this;
+    const sql = UtilSQL.getSuccessSQL({
+      name: config.name,
+      unique_id: obj.unique_id,
     });
+    sequelize.query(sql).then(ds => (cb && cb(ds)));
   }
-  print(text) {
-    Utils.print(`${this.config.name} || url_model || ${text}`);
+  async printCount() { // 获取任务总量
+    const sql = UtilSQL.getTaskCountSQL(this.config);
+    // console.log(sql);
+    // process.exit();
+    const ds = await this.sequelize.query(sql);
+    const count = _.get(ds, '0.0.count');
+    this.print(`本次实际任务总量${count}次`);
+  }
+  print(text, color) {
+    Utils.print(`${this.config.name} || url_model || ${text}`, color);
   }
 }
 
