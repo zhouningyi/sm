@@ -26,7 +26,13 @@ module.exports = async (record, success, fail) => {
   const { localbitcoins } = record.models;
   console.log(localbitcoins, 'localbitcoins...');
   if (json.data.ad_list.length > 0) {
-    const data = json.data.ad_list.map((t, i) => Object.assign({}, t.data, { profile: JSON.stringify(t.data.profile), unique_id: `${t.data.ad_id}-${i}-${new Date().getTime()}` }));
+    const data = json.data.ad_list.map((t, i) => Object.assign({}, t.data,
+      {
+        profile: JSON.stringify(t.data.profile),
+        platform: 'localbitcoins',
+        unique_id: t.data.ad_id,
+        created_time: t.data.created_at,
+      }));
     const url = json.pagination.next;
 
     await record.urlModel.upsert([{ url }]);
