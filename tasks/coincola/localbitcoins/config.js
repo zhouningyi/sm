@@ -35,5 +35,5 @@ module.exports = {
   models: ['localbitcoins'],
   printInterval: 30,
     //
-  parallN: 1,
+  parallN: 2,
 };

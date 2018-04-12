@@ -27,7 +27,7 @@
     "cheerio": "^1.0.0-rc.2",
     "d3-scale": "^1.0.7",
     "deepmerge": "^2.0.1",
-    "exchanges": "^1.0.3",
+    "exchanges": "^1.0.4",
     "lodash": "^4.17.4",
     "lodash.compose": "^2.4.1",
     "md5": "^2.2.1",

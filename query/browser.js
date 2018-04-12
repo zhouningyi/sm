@@ -18,7 +18,6 @@ function switchValue(f, a, b, c) {
   return typeof f === 'function' ? f(a, b, c) : f;
 }
 
-
 async function cnRequest(o) {
   const methodName = {
     DELETE: 'delete',

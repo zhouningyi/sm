@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "exchanges": "^1.0.1"
+    "exchanges": "^1.0.4"
   }
 }

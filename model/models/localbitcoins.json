@@ -1,3 +1,5 @@
+
+
 {
     "name": "localbitcoins",
     "desc": "localbitcoins场外交易",
@@ -20,10 +22,7 @@
         },
 
         "profile": {
-            "type": [
-                "STRING",
-                500
-            ],
+            "type": "JSONB",
             "comment": "profile"
         },
 
@@ -88,10 +87,7 @@
             "defaultValue": true
         },
         "temp_price_usd": {
-            "type": [
-                "STRING",
-                25
-            ],
+            "type": "FLOAT",
             "comment": "temp_price_usd"
         },
         "lat": {

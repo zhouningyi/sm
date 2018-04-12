@@ -3,13 +3,19 @@
  */
 const Utils = require('./../../../lib/dblink/utils');
 const _ = require('lodash');
-const { Binance, Kucoin, Okex } = require('exchanges');
+const { Binance, Kucoin, Okex, Hitbtc } = require('./../exchanges');
 
 // const ws = require('ws');
 
 async function loop(f) {
   await f();
   setTimeout(() => loop(f), 200);
+}
+
+async function delay(t) {
+  return new Promise((resolve, reject) => {
+    setTimeout(resolve, t);
+  });
 }
 
 function processData(ds, name, ishistory = false) {
@@ -43,6 +49,13 @@ module.exports = (record, success, fail) => {
     const ds = await kucoin.ticks();
     await upsert(ds, 'kucoin');
   });
+  //
+  const hitbtc = new Hitbtc({});
+  setTimeout(() => loop(async () => {
+    console.log('Hitbtc...');
+    const ds = await hitbtc.ticks();
+    await upsert(ds, 'hitbtc');
+  }), 1000);
   //
   const okex = new Okex({});
   okex.wsTicks({}, async (ds) => {

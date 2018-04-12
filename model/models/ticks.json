@@ -7,12 +7,13 @@
         "unique": true,
         "index": true
       },
-      "pair": ["STRING", 10],
+      "pair": ["STRING", 16],
       "time": "DATE",
-      "bidPrice": "FLOAT",
-      "bidVolume": "FLOAT",
-      "askPrice": "FLOAT",
-      "askVolume": "FLOAT",
+      "bid_price": "FLOAT",
+      "bid_volume": "FLOAT",
+      "last_price": "FLOAT",
+      "ask_Price": "FLOAT",
+      "ask_volume": "FLOAT",
       "exchange": ["STRING", 10]
     }
 	}

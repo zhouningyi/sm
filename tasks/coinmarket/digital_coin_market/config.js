@@ -39,7 +39,7 @@ module.exports = {
   printInterval: 30,
   end: {
     type: 'restart',
-    isUpdate: true
+    isUpdate: true,
   },
   //
   parallN: 5,

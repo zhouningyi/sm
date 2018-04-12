@@ -41,7 +41,6 @@ module.exports = {
         deviceScaleFactor: 0.3
       }
     },
-
     operate: async (page) => {
       const ds = await page.$$('.BMapLabel');
       if (!ds || !ds.length) return;
