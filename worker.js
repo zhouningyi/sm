@@ -99,8 +99,14 @@ class Worker extends Events {
     if (models) {
       const { modelConfigs } = this;
       for (const j in models) {
-        const modelName = models[j];
-        const modelConfig = typeof modelName === 'string' ? modelConfigs[modelName] : modelName;
+        let modelName = models[j];
+        let modelConfig;
+        if (typeof modelName === 'string') {
+          modelConfig = modelConfigs[modelName];
+        } else if (typeof modelName === 'object') {
+          modelConfig = modelName;
+          modelName = modelConfig.name;
+        }
         if (!modelConfig) return console.log(`${modelName}的model不存在`);
         model = await dblink.getTableModel({ db_id: modelConfig.db_id || db_id, model: modelConfig });
         result[modelName] = model;
