@@ -8,11 +8,13 @@
         "index": true
       },
       "pair": ["STRING", 16],
+      "open_buy_orders": "FLOAT",
+      "open_sell_orders": "FLOAT",
       "time": "DATE",
       "bid_price": "FLOAT",
       "bid_volume": "FLOAT",
       "last_price": "FLOAT",
-      "ask_Price": "FLOAT",
+      "ask_price": "FLOAT",
       "ask_volume": "FLOAT",
       "exchange": ["STRING", 10]
     }
