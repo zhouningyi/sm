@@ -1,8 +1,6 @@
-
-
 {
-    "name": "localbitcoins",
-    "desc": "localbitcoins场外交易",
+    "name": "localbitcoins_trade",
+    "desc": "localbitcoins_trade场外交易trade",
     "columns": {
         "unique_id": {
             "type": [
@@ -20,12 +18,10 @@
             ],
             "comment": "平台"
         },
-
         "profile": {
             "type": "JSONB",
             "comment": "profile"
         },
-
         "require_feedback_score": {
             "type": "FLOAT",
             "comment": "require_feedback_score"
@@ -203,7 +199,7 @@
             ],
             "comment": "volume_coefficient_btc"
         },
-        "actions":  {
+        "actions": {
             "type": [
                 "STRING",
                 200

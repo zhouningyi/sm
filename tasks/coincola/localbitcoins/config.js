@@ -32,7 +32,7 @@ module.exports = {
   },
   parseType: 'json',
   periodInterval: 10,
-  models: ['localbitcoins'],
+  models: ['localbitcoins', 'localbitcoins_trade'],
   printInterval: 30,
     //
   parallN: 2,
