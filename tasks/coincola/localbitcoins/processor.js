@@ -43,6 +43,9 @@ module.exports = async (record, success, fail) => {
     const url = json.pagination.next;
     if (json.pagination.next) {
       await record.urlModel.upsert([{ url }]);
+    } else {
+      await record.urlModel.destroy();
+      await record.urlModel.upsert([{ url: 'https://localbitcoins.com/sell-bitcoins-online/.json?page=1'}]);
     }
 
 
