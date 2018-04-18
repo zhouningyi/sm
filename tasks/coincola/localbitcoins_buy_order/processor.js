@@ -6,7 +6,6 @@ const Utils = require('./../../../utils');
 const lodash = Utils.lodash;
 
 
-
 function getUrl(relPath) {
   return `https://coinmarketcap.com${relPath}`;
 }
@@ -29,6 +28,9 @@ function _parse(t) {
 
 
 module.exports = async (record, success, fail) => {
+  if (fail) {
+    console.log('---------------fial', fail);
+  }
   const { json } = record;
   const { localbitcoins, localbitcoins_trade } = record.models;
   if (json.data.ad_list.length > 0) {
@@ -45,7 +47,7 @@ module.exports = async (record, success, fail) => {
       await record.urlModel.upsert([{ url }]);
     } else {
       await record.urlModel.clean();
-      await record.urlModel.upsert([{ url: 'https://localbitcoins.com/sell-bitcoins-online/.json?page=1'}]);
+      await record.urlModel.upsert([{ url: 'https://localbitcoins.com/sell-bitcoins-online/.json?page=1' }]);
     }
 
 
@@ -80,9 +82,9 @@ module.exports = async (record, success, fail) => {
 
     const cbs = lodash.differenceBy(exist, same, 'ad_id');
     const ad_ids = cbs.map(t => t.ad_id);
-    console.log(ad_ids)
+    console.log(ad_ids);
 
-    await localbitcoins_trade.destroy({ where: { ad_id: ad_ids  } }).then((projects) => {
+    await localbitcoins_trade.destroy({ where: { ad_id: ad_ids } }).then((projects) => {
           // projects 是一个包含 Project 实例的数组，各实例id 是1, 2, 或 3
           // 这在实例执行时，会使用 IN查询
     });

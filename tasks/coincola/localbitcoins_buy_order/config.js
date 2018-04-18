@@ -8,7 +8,7 @@ const _ = require('lodash');
 
 module.exports = {
   name: 'localbitcoins',
-  desc: '比特币信息',
+  desc: '比特币买单信息',
   time: {
     value: 10,
     type: 'interval'
