@@ -30,6 +30,7 @@ module.exports = {
     result[url] = { url };
     cb(result);
   },
+  retry: true,
   parseType: 'json',
   periodInterval: 10,
   models: ['localbitcoins', 'localbitcoins_trade'],
