@@ -4,6 +4,7 @@
 const Utils = require('./../../../utils');
 
 const lodash = Utils.lodash;
+const RETRY = Utils.RETRY;
 
 
 function getUrl(relPath) {
