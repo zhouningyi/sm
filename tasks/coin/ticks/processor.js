@@ -48,24 +48,24 @@ module.exports = (record, success, fail) => {
   });
 
   const kucoin = new Kucoin({});
-  loop(async () => {
-    console.log('kucoin...');
-    const ds = await kucoin.ticks();
-    await upsert(ds, 'kucoin');
-  });
+  // loop(async () => {
+  //   console.log('kucoin...');
+  //   const ds = await kucoin.ticks();
+  //   await upsert(ds, 'kucoin');
+  // });
   //
   const hitbtc = new Hitbtc({});
-  setTimeout(() => loop(async () => {
-    console.log('Hitbtc...');
-    const ds = await hitbtc.ticks();
-    await upsert(ds, 'hitbtc');
-  }), 1000);
+  // setTimeout(() => loop(async () => {
+  //   console.log('Hitbtc...');
+  //   const ds = await hitbtc.ticks();
+  //   await upsert(ds, 'hitbtc');
+  // }), 1000);
   //
   const okex = new Okex({});
-  okex.wsTicks({}, async (ds) => {
-    console.log('okex...');
-    await upsert(ds, 'okex');
-  });
+  // okex.wsTicks({}, async (ds) => {
+  //   console.log('okex...');
+  //   await upsert(ds, 'okex');
+  // });
   //
   const bittrex = new Bittrex({});
   setTimeout(() => loop(async () => {
