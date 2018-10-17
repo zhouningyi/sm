@@ -1,0 +1,72 @@
+	{
+		"name": "otc",
+		"desc": "场外交易订单",
+		"columns": {
+			"available_amount": {
+				"type": "STRING",
+				"allowNull": false,
+				"comment": "可交易的数量"
+			},
+			"coin": {
+				"type": ["STRING", 12],
+				"allowNull": false,
+				"index": true,
+				"comment": "币种"
+			},
+			"blocked": {
+				"type": "BOOLEAN",
+				"comment": "封禁"
+			},
+			"completed_amount": {
+				"type": "FLOAT",
+				"comment": "完成数"
+			},
+			"completed_order_total": {
+				"type": "FLOAT",
+				"comment": "完成的总数"
+			},
+			"start_time": {
+				"type": "TIME",
+				"comment": "开始时间"
+			},
+			"is_float": {
+				"type": "BOOLEAN",
+				"comment": "是否浮动汇率"
+			},
+			"is_hide": {
+				"type": "BOOLEAN",
+				"comment": "是否隐藏"
+			},
+			"trade_id": {
+				"type":  ["STRING", 33],
+				"comment": "交易id",
+				"unique": true,
+				"allowNull": false
+			},
+			"side": {
+				"type":  ["STRING", 10],
+				"comment": "方向"
+			},
+			"user_type": {
+				"type":  ["STRING", 10],
+				"comment": "用户类型"
+			},
+			"price": {
+				"type":  ["float", 10],
+				"comment": "用户类型",
+				"allowNull": false
+			},
+			"quote_max_amount_per_order": {
+				"type": "FLOAT",
+				"comment": "最大交易额"
+			},
+			"quote_min_amount_per_order": {
+				"type": "FLOAT",
+				"comment": "最小交易额"
+			},
+			"payment_methods": {
+				"type": ["ARRAY", "STRING", 30],
+				"comment": "支付方式"
+			}
+		}
+	}

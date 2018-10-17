@@ -40,6 +40,9 @@ async function cnRequest(o) {
 async function normalRequest(o) {
   return new Promise((resolve, reject) => {
     request(o, (e, res, body) => {
+      if (e) return reject(e);
+      // console.log(e, res, 'normalRequest...');
+      // process.exit();
       resolve(res);
     });
   });
@@ -52,6 +55,10 @@ class Browser extends Event {
   constructor(config, options) {
     super();
     this.config = config;
+    let { proxy } = options;
+    options = _.cloneDeep(options);
+    if (proxy && typeof proxy === 'function') proxy = proxy();
+    options.proxy = proxy;
     this.options = Utils.deepMerge(Browser.options, options);
     this.init();
   }
@@ -121,11 +128,14 @@ class Browser extends Event {
     // const headers = this.createHeader();
   }
   _getOptions(params) {
+    const headers = this.createHeader();
+    const { proxy } = this.options;
     const { parseType, encoding, queryType = 'get', queryTimeout = 10 * 1000 } = this.config;
     return {
+      proxy,
       timeout: queryTimeout,
       encoding: encoding || parseType === 'image' ? 'binary' : 'utf8',
-      headers: this.createHeader(),
+      headers,
       method: queryType.toUpperCase(),
       ...(params || {}),
     };
@@ -138,6 +148,8 @@ class Browser extends Event {
   }
   async queryDirect(params, next) {
     const o = this._getOptions(params);
+    delete o.headers['x-forwarded-for'];
+    console.log(o, 'o...o....o....');
     let ds;
     if (o.encoding in CHINESE_ENCODINGS) {
       ds = await cnRequest(o);

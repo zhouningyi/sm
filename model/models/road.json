@@ -1,0 +1,36 @@
+	{
+		"name": "road",
+		"desc": "道路",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 100],
+				"allowNull": false,
+				"unique": true,
+				"index": true,
+				"comment": "id"
+			},
+			"parent_id": {
+				"type": ["STRING", 100]
+			},
+			"name": {
+				"type": ["STRING", 30],
+				"comment": "名称"
+			},
+			"polyline": {
+				"type": "GEOMETRY",
+				"comment": "几何"
+			},
+			"level": {
+				"type": "FLOAT",
+				"comment": "等级"
+			},
+			"duration": {
+				"type": "FLOAT",
+				"comment": "驾驶时间"
+			},
+			"adcode": {
+				"type": ["string", 10],
+				"comment": "编码"
+			}
+		}
+	}

@@ -1,0 +1,52 @@
+{
+		"name": "otc_user",
+		"desc": "场外交易用户",
+		"columns": {
+			"user_id": {
+				"type":  ["STRING", 50],
+				"comment": "用户id",
+				"unique": true,
+				"allowNull": false
+			},
+			"avg_payment_time": {
+				"type": "FLOAT",
+				"comment":"平均放币时间"
+			},
+			"has_bank_card": {
+				"type": "BOOLEAN",
+				"comment":"是否绑定银行卡"
+			},
+			"has_phone": {
+				"type": "BOOLEAN",
+				"comment":"是否绑定手机"
+			},
+			"cancelled_order_quantity": {
+				"type": "INTEGER",
+				"comment": "退单次数"
+			},
+			"completed_order_quantity": {
+				"type": "INTEGER",
+				"comment": "完成单次数"
+			},
+			"start_time": {
+				"type": "TIME",
+				"comment": "注册日期"
+			},
+			"disabled": {
+				"type": "BOOLEAN",
+				"comment": "是否失效"
+			},
+			"nick_name": {
+				"type": ["STRING", 20],
+				"comment": "昵称"
+			},
+			"real_name": {
+				"type": ["STRING", 10],
+				"comment": "真名"
+			},
+			"is_certified": {
+				"type": "BOOLEAN",
+				"comment": "是否认证"
+			}
+		}
+	}

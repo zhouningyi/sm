@@ -1,0 +1,17 @@
+	{
+		"name": "wfee_balance",
+		"desc": "wfee_balance",
+    "columns": {
+      "unique_id": {
+        "type": ["STRING", 50],
+        "unique": true,
+        "index": true
+      },
+      "trans_count": "FLOAT",
+      "name": ["STRING", 22],
+      "address": ["STRING", 50],
+      "url": ["STRING", 200],
+      "time": "DATE",
+      "balance": "FLOAT"
+    }
+	}

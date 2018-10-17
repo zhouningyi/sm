@@ -1,0 +1,16 @@
+	{
+		"name": "wfee_transaction",
+		"desc": "wfee_transaction",
+    "columns": {
+      "unique_id": {
+        "type": ["STRING", 80],
+        "unique": true,
+        "index": true
+      },
+      "txid": ["STRING", 80],
+      "source": ["STRING", 80],
+      "target": ["STRING", 80],
+      "time": "DATE",
+      "amount": "FLOAT"
+    }
+	}

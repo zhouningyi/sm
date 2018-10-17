@@ -1,0 +1,14 @@
+	{
+		"name": "wfee_balance_history",
+		"desc": "wfee_balance_history",
+    "columns": {
+      "unique_id": {
+        "type": ["STRING", 100],
+        "unique": true,
+        "index": true
+      },
+      "address": ["STRING", 50],
+      "time": "DATE",
+      "balance": "FLOAT"
+    }
+	}

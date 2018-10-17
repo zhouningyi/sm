@@ -33,12 +33,12 @@ class Browsers extends Event {
     //
     const browserO = {
       browser,
+      proxy: genProxy,
       headers: {
         UserAgent: getUserAgent,
         userAgent: getUserAgent,
         'Proxy-Switch-Ip': proxy === 'abu' ? 'yes' : null,
         'x-forwarded-for': getIp,
-        proxy: genProxy,
         ...headers
       }
     };
