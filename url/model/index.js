@@ -50,7 +50,9 @@ class UrlModel extends Event {
   createModel(next) {
     const modelConf = Model.getModel(this.config.name);
     const t = getT();
-    const model = this.model = this.sequelize.define(modelConf.name, modelConf.columns, {});
+    const model = this.model = this.sequelize.define(modelConf.name, modelConf.columns, {
+      freezeTableName: true
+    });
     model.schema(schemaName).sync().then(() => {
       this.print(`url表已建立, ${getDt(t)}`, 'gray');
       this.prefix(() => next());

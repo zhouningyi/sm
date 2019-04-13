@@ -33,21 +33,21 @@ module.exports = {
     type: 'interval',
     value: 10
   },
-  urls (cb) {
-      const sql = `
+  urls(cb) {
+    const sql = `
       SELECT ST_AsGeojson(ST_Envelope(polygon)) as bound,  substring(adcode, 1, 4) || '00' AS adcode
       FROM house_lianjia_plates
       WHERE polygon IS NOT NULL
     `;
 
-    sequelize.query(sql).then(ds => {
+    sequelize.query(sql).then((ds) => {
       const urls = {};
-      ds[0].forEach(d => {
-        let {adcode, bound} = d;
+      ds[0].forEach((d) => {
+        let { adcode, bound } = d;
         if (adcodes[adcode]) adcode = adcodes[adcode];
-        let range = getRange(bound);
-        let url  = getURL(adcode, range);
-        urls[url] = {url};
+        const range = getRange(bound);
+        const url = getURL(adcode, range);
+        urls[url] = { url };
       });
       cb(urls);
     });

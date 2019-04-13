@@ -9,6 +9,7 @@ const cheerio = require('cheerio');
 const Event = require('events').EventEmitter;
 
 const Utils = require('./../utils');
+
 const RETRY = Utils.RETRY;
 
 
@@ -34,7 +35,7 @@ class Processor extends Event {
       if (isProcess) {
         if (res) body = record.body = res.body;
         if (!body && !config.retry) return failF('body返回为空..');
-        if (!body && config.retry) body = JSON.stringify({ data: [], code: RETRY});
+        if (!body && config.retry) body = JSON.stringify({ data: [], code: RETRY });
         if (parseType === 'dom') {
           record.$ = cheerio.load(body);
         } else if (parseType === 'json' && body) {
@@ -67,6 +68,5 @@ class Processor extends Event {
 }
 
 Processor.options = {};
-
 
 module.exports = Processor;

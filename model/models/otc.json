@@ -67,6 +67,10 @@
 			"payment_methods": {
 				"type": ["ARRAY", "STRING", 30],
 				"comment": "支付方式"
+			},
+			"remark": {
+				"type": ["STRING", 300],
+				"comment": "备注"
 			}
 		}
 	}

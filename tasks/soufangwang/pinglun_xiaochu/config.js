@@ -25,9 +25,9 @@ module.exports = {
         const { community_id } = d;
         const url = `http://xijiaohuayuanrh.fang.com/house/ajaxrequest/dianpingList_201501.php?city=%E4%B8%8A%E6%B5%B7&newcode=${community_id}&jiajing=0&page=1&tid=&pagesize=2000&starnum=6&shtag=-1`;
         urls.push({ url,
-params: {
-          community_id
-        } });
+          params: {
+  community_id
+} });
       });
       cb(urls);
     });

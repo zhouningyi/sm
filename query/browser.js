@@ -149,12 +149,19 @@ class Browser extends Event {
   async queryDirect(params, next) {
     const o = this._getOptions(params);
     delete o.headers['x-forwarded-for'];
-    console.log(o, 'o...o....o....');
     let ds;
     if (o.encoding in CHINESE_ENCODINGS) {
-      ds = await cnRequest(o);
+      try {
+        ds = await cnRequest(o);
+      } catch (e) {
+        ds = null;
+      }
     } else {
-      ds = await normalRequest(o);
+      try {
+        ds = await normalRequest(o);
+      } catch (e) {
+        ds = null;
+      }
     }
     const data = {
       res: ds

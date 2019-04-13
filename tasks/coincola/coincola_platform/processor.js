@@ -51,7 +51,6 @@ module.exports = async (record, success, fail) => {
       user_info: JSON.stringify(t.advertiser),
       platform: 'coincola',
       unique_id: `${new Date().getTime()}-${index}-${trade_id}`,
-            // unique_id: trade_id
     };
   });
 

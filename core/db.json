@@ -10,7 +10,7 @@
 	},
 	{
 		"db_id": "local_database",
-		"host": "localhost",
+		"host": "127.0.0.1",
 		"database": "database",
 		"port": "5432",
 		"username": "postgres",
@@ -37,8 +37,17 @@
 	},
 	{
 		"db_id": "local_spider",
-		"host": "localhost",
+		"host": "127.0.0.1",
 		"database": "spider",
+		"username": "postgres",
+		"password": "zhouningyi",
+		"db_type": "postgres",
+		"port": "5432"
+	},
+	{
+		"db_id": "local_bfs",
+		"host": "127.0.0.1",
+		"database": "bfs",
 		"username": "postgres",
 		"password": "zhouningyi",
 		"db_type": "postgres",

@@ -10,7 +10,7 @@ const dblink = require('./../lib/dblink');
 const workers = [
   {
     name: '本地worker',
-    host: 'localhost'
+    host: '127.0.0.1'
   }
 ];
 //

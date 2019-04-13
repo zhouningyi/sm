@@ -1,0 +1,34 @@
+	{
+		"name": "otc_tick",
+		"desc": "场外交易订单",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true
+			},
+			"exchange": {
+				"type": ["STRING", 12],
+				"allowNull": false,
+				"comment": "交易所"
+			},
+			"coin": {
+				"type": ["STRING", 12],
+				"allowNull": false,
+				"index": true,
+				"comment": "币种"
+			},
+			"bid_price": {
+				"type": "FLOAT",
+				"comment": ""
+			},
+			"ask_price": {
+				"type": "FLOAT",
+				"comment": ""
+			},
+			"time": {
+				"type": "TIME",
+				"comment": "时间"
+			}
+		}
+	}

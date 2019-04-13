@@ -4,7 +4,7 @@
 	"core_servers": {
 		"local": 	{
 			"db_id": "local_spider",
-			"host": "localhost",
+			"host": "127.0.0.1",
 			"database": "spider",
 			"port": "5432",
 			"username": "postgres",
