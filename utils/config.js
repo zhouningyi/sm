@@ -19,7 +19,7 @@ const checkConfig = (cfg) => {
   const qtypes = { get: 1, post: 1 };
   if (!(cfg.queryType.toLowerCase() in qtypes)) warnExit('queryType 只能为get 或post');
   if (!cfg.version) warnExit('请设置config.version');
-  const ptypes = { file: 1, image: 1, json: 1, dom: 1 };
+  const ptypes = { file: 1, image: 1, json: 1, dom: 1, raw: 1 };
   if (!(cfg.parseType.toLowerCase() in ptypes)) warnExit('parseType 错误');
   // 警告
   // if (!cfg.models) warn(`${warnHead}建议配置models, models格式为 [model1, model2..]`);

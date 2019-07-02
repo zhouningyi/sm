@@ -1,0 +1,34 @@
+
+{
+		"name": "amap_building",
+		"desc": "高德建筑",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"name": {
+				"type": ["STRING", 50],
+				"unique": true,
+				"comment": "名称"
+			},
+			"lat": {
+				"type": "FLOAT",
+				"comment": "纬度"
+			},
+			"lng": {
+				"type": "FLOAT",
+				"comment": "经度"
+			},
+			"floor": {
+				"type": "INTEGER",
+				"comment": "层数"
+			},
+			"polygon": {
+				"type": "GEOMETRY",
+				"comment": "底部多边形"
+			}
+		}
+	}

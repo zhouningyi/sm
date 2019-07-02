@@ -1,0 +1,30 @@
+
+{
+		"name": "amap_tile",
+		"desc": "高德tile搜集",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"x": {
+				"type": "INTEGER"
+			},
+			"y": {
+				"type": "INTEGER"
+			},
+			"z": {
+				"type": "INTEGER"
+			},
+			"has_building": {
+				"type": "BOOLEAN",
+				"comment": "纬度"
+			},
+			"round_over": {
+				"type": "BOOLEAN",
+				"comment": "挖掘完"
+			}
+		}
+	}
