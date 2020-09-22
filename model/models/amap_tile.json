@@ -22,6 +22,14 @@
 				"type": "BOOLEAN",
 				"comment": "纬度"
 			},
+			"has_fetch": {
+				"type": "BOOLEAN",
+				"comment": "是否抓取"
+			},
+			"count_est": {
+				"type": "INTEGER",
+				"comment": "数量"
+			},
 			"round_over": {
 				"type": "BOOLEAN",
 				"comment": "挖掘完"

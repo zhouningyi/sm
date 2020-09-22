@@ -1,9 +1,9 @@
 /**
  * 爬取配置
  */
-let Utils = require('./../../../../lib/utils');
-let Models = require('./../../../../model');
-let gaodefy = require('./../../../../lib/gaodefy');
+const Utils = require('./../../../../lib/utils');
+const Models = require('./../../../../model');
+const gaodefy = require('./../../../../lib/gaodefy');
 
 const list = ['一环', '二环', '三环', '四环', '五环', '内环', '中环', '外环', '绕城'];
 
@@ -19,15 +19,17 @@ module.exports = {
     // var model = Models.house_lianjia_community;
     const sql = `
       SELECT 
-        name, 
+        name,
         adcode
       FROM areas
       WHERE level='city'
-      AND adcode LIKE '31%'
+      AND adcode LIKE '8200%'
+      LIMIT 100
     `;
     Models.sequelize.query(sql).then((ds) => {
-      let url, 
-urls = {};
+      console.log(ds, 'ds...');
+      let url,
+        urls = {};
       ds[0].forEach((d) => {
         const { adcode, name } = d;
         list.forEach((str) => {

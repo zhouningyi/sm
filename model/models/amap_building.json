@@ -11,7 +11,6 @@
 			},
 			"name": {
 				"type": ["STRING", 50],
-				"unique": true,
 				"comment": "名称"
 			},
 			"lat": {
@@ -29,6 +28,34 @@
 			"polygon": {
 				"type": "GEOMETRY",
 				"comment": "底部多边形"
+			},
+			"address": {
+				"type": ["STRING", 150],
+				"comment": "名称"
+			},
+			"adcode": {
+				"type": ["STRING", 30],
+				"comment": "名称"
+			},
+			"town_code": {
+				"type": ["STRING", 30],
+				"comment": "街道id"
+			},
+			"town_name": {
+				"type": ["STRING", 50],
+				"comment": "街道名"
+			},
+			"type": {
+				"type": ["STRING", 50],
+				"comment": "类型"
+			},
+			"raw_type_id": {
+				"type": ["STRING", 50],
+				"comment": "类型"
+			},
+			"config": {
+				"type": "JSONB",
+				"comment": "配置"
 			}
 		}
 	}

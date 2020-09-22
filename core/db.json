@@ -38,7 +38,7 @@
 	{
 		"db_id": "local_spider",
 		"host": "127.0.0.1",
-		"database": "spider",
+		"database": "spider_new",
 		"username": "postgres",
 		"password": "zhouningyi",
 		"db_type": "postgres",

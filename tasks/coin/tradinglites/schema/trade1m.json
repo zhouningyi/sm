@@ -1,0 +1,25 @@
+{
+  "name": "trade1m",
+  "desc": "trade1m",
+  "columns": {
+    "volume_short": {
+      "type": "FLOAT"
+    },
+    "volume_long": {
+      "type": "FLOAT"
+    },
+    "price": {
+      "type": "FLOAT"
+    },
+    "detail": {
+      "type": "STRING"
+    },
+    "symbol_id": {
+      "type": ["STRING", 40],
+      "index": true
+    },
+    "time": {
+      "type": "DATE"
+    }
+  }
+}

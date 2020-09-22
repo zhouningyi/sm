@@ -42,7 +42,6 @@ async function normalRequest(o) {
     request(o, (e, res, body) => {
       if (e) return reject(e);
       // console.log(e, res, 'normalRequest...');
-      // process.exit();
       resolve(res);
     });
   });
@@ -119,7 +118,6 @@ class Browser extends Event {
     // const file = '/Users/zhouningyi/git/hn.pdf';
     // await page.pdf({ path: file, format: 'A4' });
     // cp.execSync(`open ${file}`);
-    // process.exit();
 
     //
     const { datas } = this;
@@ -127,14 +125,20 @@ class Browser extends Event {
 
     // const headers = this.createHeader();
   }
+  _getEncoding() {
+    const { parseType, encoding } = this.config;
+    if (encoding === null) return null;
+    return encoding || parseType === 'image' ? 'binary' : 'utf8';
+  }
   _getOptions(params) {
     const headers = this.createHeader();
     const { proxy } = this.options;
-    const { parseType, encoding, queryType = 'get', queryTimeout = 10 * 1000 } = this.config;
+    const { queryType = 'get', queryTimeout = 10 * 1000 } = this.config;
+    const encoding = this._getEncoding();
     return {
       proxy,
       timeout: queryTimeout,
-      encoding: encoding || parseType === 'image' ? 'binary' : 'utf8',
+      encoding,
       headers,
       method: queryType.toUpperCase(),
       ...(params || {}),

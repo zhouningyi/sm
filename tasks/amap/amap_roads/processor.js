@@ -28,7 +28,6 @@ module.exports = (record, success, fail) => {
     _.forEach(steps, (step) => {
       const { toll_road, toll, cities, duration, tmcs } = step;
       const adcode = _.get(cities, '0.adcode');
-
       let name = toll_road || toll;
       if (!name || !name.length) name = '';
       _.forEach(tmcs, (lineSeg) => {
@@ -56,7 +55,6 @@ module.exports = (record, success, fail) => {
   .then(() => success(null))
   .catch((e) => {
     // console.log(e);
-    // process.exit();
     return fail('xx原因');
   });
 };

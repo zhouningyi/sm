@@ -1,0 +1,83 @@
+Arguments: 
+  /Users/zhouningyi/.nvm/versions/node/v12.16.2/bin/node /Users/zhouningyi/.nvm/versions/node/v12.16.2/bin/yarn add influxdb-nodejs
+
+PATH: 
+  /usr/local/opt/openssl/bin:/usr/local/opt/openssl/bin:/Users/zhouningyi/.nvm/versions/node/v12.16.2/bin:/Applications/2UDA-9.5/PostgreSQL-9.5/bin:/Users/zhouningyi/.cargo/bin:/Library/Frameworks/Python.framework/Versions/3.8/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Applications/Server.app/Contents/ServerRoot/usr/bin:/Applications/Server.app/Contents/ServerRoot/usr/sbin:/Library/Apple/usr/bin:/Applications/Wireshark.app/Contents/MacOS:/Users/zhouningyi/.local/bin:/Users/zhouningyi/anaconda2/bin:/Users/zhouningyi/git/software/apache-maven-3.5.2/bin:/Users/zhouningyi/.local/bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.16.2
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: ENOENT: no such file or directory, copyfile '/Users/zhouningyi/Library/Caches/Yarn/v6/npm-ansi-styles-2.2.1-b432dd3358b634cf75e1e4664368240533c1ddbe-integrity/node_modules/ansi-styles/index.js' -> '/Users/zhouningyi/git/sm/node_modules/babel-code-frame/node_modules/ansi-styles/index.js'
+
+npm manifest: 
+  {
+    "name": "sm",
+    "version": "1.0.0",
+    "description": "爬虫框架",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/zhouningyi/sm.git"
+    },
+    "keywords": [
+      "spider"
+    ],
+    "author": "zhouningyi,disoul",
+    "license": "MIT",
+    "bugs": {
+      "url": "https://github.com/zhouningyi/sm/issues"
+    },
+    "homepage": "https://github.com/zhouningyi/sm#readme",
+    "dependencies": {
+      "async": "^2.6.0",
+      "bcore": "^0.0.21",
+      "binance-api-node": "^0.5.5",
+      "chalk": "^2.3.0",
+      "cheerio": "^1.0.0-rc.2",
+      "d3-scale": "^1.0.7",
+      "deepmerge": "^2.0.1",
+      "exchanges": "^1.0.4",
+      "lodash": "^4.17.4",
+      "lodash.compose": "^2.4.1",
+      "md5": "^2.2.1",
+      "needle": "^1.1.2",
+      "optimist": "^0.6.1",
+      "pg": "^8.1.0",
+      "pg-escape": "^0.2.0",
+      "pg_column": "^1.0.10",
+      "puppeteer": "^1.2.0",
+      "random-useragent": "^0.3.0",
+      "request": "^2.69.0",
+      "sequelize": "^4.33.2",
+      "sphericalmercator": "^1.0.5",
+      "sqlstring": "^2.3.1",
+      "superagent": "^3.8.2",
+      "superagent-charset": "^1.2.0",
+      "zcontrol": "^1.2.31"
+    },
+    "devDependencies": {
+      "babel-eslint": "^7.1.1",
+      "eslint": "^3.12.2",
+      "eslint-config-airbnb": "^13.0.0",
+      "eslint-plugin-flow-vars": "^0.5.0",
+      "eslint-plugin-import": "^2.2.0",
+      "eslint-plugin-jsx-a11y": "^2.2.3",
+      "eslint-plugin-react": "^6.8.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

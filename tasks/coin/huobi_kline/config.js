@@ -7,14 +7,14 @@ const Utils = require('./../../../lib/utils');
 const { future_kline, kline } = require('./../exchanges/schemas');
 
 // future_kline.name = 'future_kline_binance';
-kline.name = 'binance_kline';
+kline.name = 'huobi_kline';
 
 // const dblink = require('./../../../lib/dblink');
 // const pairs = ['ETHBTC'];
 // const b = new Binance();
 module.exports = {
-  name: 'binance_kline',
-  desc: 'binance_kline',
+  name: 'huobi_kline',
+  desc: 'huobi_kline',
   time: {
     value: 10,
     type: 'interval'

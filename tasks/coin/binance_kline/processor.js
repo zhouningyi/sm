@@ -23,10 +23,10 @@ async function delay(t) {
 }
 
 module.exports = (record, success, fail) => {
-  const { future_kline_binance, kline_binance } = record.models;// ticks_history_binance
+  const { binance_kline } = record.models;// ticks_history_binance
 
   const pairs = ['BTC-USDT', 'ETH-USDT'];
-  const intervals = ['1m'];//
+  const intervals = ['5m', '15m'];//
 
   const exchange = new Binance({});
   const oneMinute = 60 * 1000;
@@ -54,8 +54,9 @@ module.exports = (record, success, fail) => {
     console.log(`spot - ${interval} - ${pair} start`);
     const ds = await exchange.kline({ pair, interval, startTime, endTime });
     if (!ds)console.log('数据为空....');
+    // console.log(ds, 'ds....');
     console.log(`spot - ${interval} - ${pair} end`);
-    await Utils.batchUpsert(kline_binance, ds);
+    await Utils.batchUpsert(binance_kline, ds);
     console.log(`spot - ${interval} - ${pair} save`);
   }
 

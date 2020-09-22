@@ -1,0 +1,34 @@
+{
+  "name": "kline1m",
+  "desc": "kline1m",
+  "columns": {
+    "open": {
+      "type": "FLOAT"
+    },
+    "funding_rate": {
+      "type": "FLOAT"
+    },
+    "high": {
+      "type": "FLOAT"
+    },
+    "low": {
+      "type": "FLOAT"
+    },
+    "close": {
+      "type": "FLOAT"
+    },
+    "volume_long": {
+      "type": "FLOAT"
+    },
+    "volume_short": {
+      "type": "FLOAT"
+    },
+    "symbol_id": {
+      "type": ["STRING", 40],
+      "index": true
+    },
+    "time": {
+      "type": "DATE"
+    }
+  }
+}

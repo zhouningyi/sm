@@ -92,7 +92,14 @@ class Tasks extends Event {
     if (isUrlMode) {
       await this.initUrlModel();
       if (isClean) await this.dropModel();
-      await this.runUrlModel();
+      console.log('dropModel done...');
+      try {
+        await this.runUrlModel();
+      } catch (e) {
+        console.log(e, 'runUrlModel....');
+      }
+
+      console.log('runUrlModel...');
       if (isUpdate) await this.createUrls();
       await this.updateUrls();
       if (!options.onlyUrls) await this.createWorkers();

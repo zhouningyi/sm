@@ -1,0 +1,45 @@
+
+{
+		"name": "amap_aomen_washes",
+		"desc": "澳门数据清洗",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"name": {
+				"type": ["STRING", 111],
+				"comment": "名称"
+			},
+			"district": {
+				"type": ["STRING", 111],
+				"comment": "名称"
+			},
+			"name_format": {
+				"type": ["STRING", 111],
+				"comment": "名称"
+			},
+			"type": {
+				"type": ["STRING", 50],
+				"comment": "分类"
+			},
+			"adcode": {
+				"type": ["STRING", 30],
+				"comment": "名称"
+			},
+			"category": {
+				"type": ["STRING", 30],
+				"comment": "分类"
+			},
+			"lat": {
+				"type": "FLOAT",
+				"comment": "纬度"
+			},
+			"lng": {
+				"type": "FLOAT",
+				"comment": "经度"
+			}
+		}
+	}

@@ -6,7 +6,7 @@ const _ = require('lodash');
 const dblink = require('./../../../lib/dblink');
 
 module.exports = {
-  name: 'amap_area',
+  name: 'amap_areas',
   desc: '中国地区数据信息',
   time: {
     value: 10,

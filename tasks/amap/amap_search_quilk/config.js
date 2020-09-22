@@ -73,14 +73,16 @@ module.exports = {
     type: 'interval',
     value: 7
   },
-  urls(cb){
+  urls(cb) {
     // const addons = '' //"AND adcode LIKE '50%'";
     Models.sequelize
     .query(houseShanghai)
-    .then(function(ds){
-      var name, url, ds = ds[0];
-      var urls = {};
-      ds.forEach(function(d){
+    .then((ds) => {
+      var name,
+        url,
+        ds = ds[0];
+      const urls = {};
+      ds.forEach((d) => {
         createUrl(d, urls);
       });
       cb(urls);

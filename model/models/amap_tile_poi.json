@@ -1,0 +1,93 @@
+
+{
+		"name": "amap_tile_poi",
+		"desc": "高德瓦片poi",
+		"columns": {
+			"unique_id": {
+				"type": ["STRING", 50],
+				"allowNull": false,
+				"unique": true,
+				"comment": "唯一id"
+			},
+			"center": {
+				"type": "GEOMETRY",
+				"comment": "中心点"
+			},
+			"name": {
+				"type": ["STRING", 50],
+				"comment": "名称"
+			},
+			"poi_id": {
+				"type": ["STRING", 50],
+				"comment": "高德地图ID"
+			},
+			"raw_type_id": {
+				"type": ["STRING", 50],
+				"comment": "tile中的id"
+			},
+			"type_name": {
+				"type": ["STRING", 50],
+				"comment": "分类名称"
+			},
+			"type_code": {
+				"type": ["STRING", 50],
+				"comment": "编码"
+			},
+			"address": {
+				"type": ["STRING", 150],
+				"comment": "名称"
+			},
+			"adcode": {
+				"type": ["STRING", 30],
+				"comment": "名称"
+			},
+			"town_code": {
+				"type": ["STRING", 30],
+				"comment": "街道id"
+			},
+			"town_name": {
+				"type": ["STRING", 50],
+				"comment": "街道名"
+			},
+			"telephone": {
+				"type": ["STRING", 50],
+				"comment": "电话"
+			},
+			"area": {
+				"type": "FLOAT",
+				"comment": "面积"
+			},
+			"config": {
+				"type": "JSONB",
+				"comment": "配置"
+			},
+			"real_address": {
+				"type": ["STRING", 150],
+				"comment": "清洗后地址"
+			},
+			"real_no": {
+				"type": ["STRING", 150],
+				"comment": "清洗后号数"
+			},
+			"real_parent_name": {
+				"type": ["STRING", 150],
+				"comment": "真实上级名称"
+			},
+			"aoi_name": {
+				"type": ["STRING", 150],
+				"comment": "aoi名称"
+			},
+			"aoi_id": {
+				"type": ["STRING", 150],
+				"comment": "aoiId"
+			},
+			"aoi_area": {
+				"type": "FLOAT",
+				"comment": "小区面积"
+			},
+			"formatted_address": {
+				"type": ["STRING", 150],
+				"comment": "aoiId"
+			}
+		}
+	}

@@ -8,11 +8,25 @@ const dblink = require('./../../../lib/dblink');
 const _ = require('lodash');
 const mock = require('./mock');
 
+
+const adcode = '310000';
+const city = '上海市';
+
+const seeds = [[109887, 53445, 17]];
 // console.log(333);
+
+const key = '46799a1920f8b8914ad7d0a2db0096d1';
+function getUrlRGeoCoder(lat, lng, r) {
+  const radiusQ = r ? (`&extensions=all&radius=${r}`) : '';
+  return `${'http://restapi.amap.com/v3/geocode/regeo?' +
+ 'key='}${key}&s=rsv3${radiusQ}&location=${lng},${lat}`;
+}
+
+
 module.exports = {
   version: 2,
-  name: 'amap_building_v5',
-  desc: '通过poi点分布，爬取建筑数据',
+  name: 'amap_r_geocodings',
+  desc: '反向地理编码',
   parallN: 2,
   queryInterval: 10,
   time: {
@@ -20,35 +34,16 @@ module.exports = {
     value: 1
   },
   urls: async (cb, db_id) => {
-    // const centers = [{
-    //   lat: 31.251387,
-    //   lng: 121.484826
-    // }];
-    // const tiles = gaodefy.getTilesFromLatlngs(centers, 18);
-    // let t0 = _.values(tiles)[0];
-    // t0 = { x: t0[0], y: t0[1], z: t0[2] };
-    // const t0 = { x: 219196, y: 107360, z: 18 };
-    // const t0 = { z: 18, x: 219645, y: 106828 }; // 上海
-
-    const t0 = { z: 18, x: 218168, y: 106273 }; // 泰州
-    // "x": 219137, "y": 107336, "z": 18,
-    let { data: ds } = await dblink.queryRaw(db_id, `
-      SELECT x, y, z, ${t0.x} - x as dx, ${t0.y} - y as dy, count_est
-      FROM amap_tile
-      WHERE has_fetch is NULL
-      AND count_est IS NOT NULL
-      AND abs(${t0.x} - x) < 80
-      AND abs(${t0.y} - y) < 80
-      ORDER BY count_est DESC
-      LIMIT 500
+    const { data: ds } = await dblink.queryRaw(db_id, `
+    SELECT unique_id, lat, lng FROM amap_building 
+    WHERE lng > 120.1 AND lng < 123
+    AND lat > 30.1 AND lat < 32
+    AND town IS NULL
     `);
-    ds = [t0].concat(ds);
     const urls = {};
     _.forEach(ds, (d) => {
-      const { x, y, z, count_est } = d;
-      const depth = 2;
-      const { url, tiles } = gaodefy.getUrlBuildingV5(x, y, z, depth);
-      urls[url] = { url, params: { x, y, z, tiles, depth } };
+      const url = getUrlRGeoCoder(d.lat, d.lng, 200);
+      urls[url] = { url, params: { ...d } };
     });
     cb(urls);
   },
@@ -65,7 +60,7 @@ module.exports = {
   //   let url;
   //   // ds = ds[0];
   //   const urls = {};
-  //   const tiles = gaodefy.getTilesFromLatlngs(ds, 18);
+  //   const tiles = gaodefy.getTilesFromLatlngs(ds, 17);
   //   const depth = 3;
   //   _.values(tiles).forEach((t) => {
   //     const [x, y, z] = t;
@@ -73,17 +68,16 @@ module.exports = {
   //     urls[url] = { url, params: { x, y, z } };
   //     // console.log(url, 'url....');
   //   });
-  //   // url = 'https://vdata.amap.com/tiles?mapType=normal&v=3&style=5&rd=1&flds=building&t=18,107996,49570';
+  //   // url = 'https://vdata.amap.com/tiles?mapType=normal&v=3&style=5&rd=1&flds=building&t=17,107996,49570';
   //   // urls[url] = { url };
   //   cb(urls);
   //   // });
   // },
-  parseType: 'raw',
+  parseType: 'json',
   end: {
     type: 'restart',
     isUpdate: true,
   },
-  printInterval: 30,
   //
-  models: ['amap_building', 'amap_tile', 'amap_tile_poi']
+  models: ['amap_building']
 };
